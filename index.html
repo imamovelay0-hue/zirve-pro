@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Zirvə — Hündürlüyünü ölç. Paylaş. Fəth et.</title>
+<meta name="description" content="Zirvə — dağçılar üçün premium GPS hündürlük ölçmə və sosial platforma. Öz zirvələrini kəşf et, kartlar yarat, liderlik tablosunda irəlilə.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏔️</text></svg>">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a1628">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ZİRVƏ">
+<!-- Open Graph / WhatsApp / Telegram preview -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="ZİRVƏ — Hündürlüyünü ölç. Paylaş. Fəth et.">
+<meta property="og:description" content="Dağçılar üçün premium GPS hündürlük platforması. Zirvələrini kəşf et, kartlar yarat, liderlik tablosunda irəlilə.">
+<meta property="og:image" content="og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.open-meteo.com">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ============================================================
+     TOP NAV — global, sticky
+     ============================================================ -->
+<header class="top-nav" id="topNav">
+  <a href="#top" class="nav-brand">
+    <span class="nav-mark">△</span>
+    <span class="nav-name">ZİRVƏ</span>
+  </a>
+  <nav class="nav-links" aria-label="primary">
+    <a href="#features" data-i18n="nav.features">Xüsusiyyətlər</a>
+    <a href="#app" data-i18n="nav.app">App</a>
+    <a href="#social" data-i18n="nav.social">Sosial</a>
+  </nav>
+  <div class="nav-right">
+    <div class="lang-switch" id="langSwitch">
+      <button data-lang="az" class="active">AZ</button>
+      <button data-lang="tr">TR</button>
+      <button data-lang="en">EN</button>
+    </div>
+    <a href="#app" class="nav-cta" data-i18n="nav.cta">Başla</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============================================================
+       HERO — fullscreen cinematic
+       ============================================================ -->
+  <section class="hero">
+    <div class="hero-photo"></div>
+    <div class="hero-photo-2"></div>
+    <div class="hero-scrim"></div>
+
+    <div class="hero-inner">
+      <div class="hero-eyebrow">
+        <span class="pulse-dot"></span>
+        <span id="heroLocEye" data-i18n="hero.eyebrow">EXPEDITION · AZ</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="line" data-i18n="hero.line1"><em>HÜNDÜRLÜYÜNÜ</em></span>
+        <span class="line" data-i18n="hero.line2">ÖLÇ.</span>
+        <span class="line" data-i18n="hero.line3">PAYLAŞ.</span>
+        <span class="line accent" data-i18n="hero.line4">FƏTH ET.</span>
+      </h1>
+
+      <!-- Signature: kinetic LCD altimeter reading user's real GPS -->
+      <div class="altimeter" id="altimeter">
+        <div class="alt-label">
+          <span class="alt-caption" data-i18n="hero.altCaption">HAL-HAZIRDA SƏNİN HÜNDÜRLÜYÜN</span>
+          <span class="alt-status" id="altStatus" data-i18n="hero.altStatus">GPS İCAZƏSİ GÖZLƏNİLİR</span>
+        </div>
+        <div class="alt-readout" id="altReadout" aria-live="polite">
+          <span class="alt-digit">—</span>
+          <span class="alt-digit">—</span>
+          <span class="alt-digit">—</span>
+          <span class="alt-digit">—</span>
+          <span class="alt-unit">m</span>
+        </div>
+        <button class="alt-cta" id="heroLocateBtn" data-i18n="hero.locate">HÜNDÜRLÜYÜMÜ ÖLÇ →</button>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint" aria-hidden="true">
+      <span data-i18n="hero.scroll">SCROLL</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       STAT REEL — count-up on scroll
+       ============================================================ -->
+  <section class="stat-reel reveal">
+    <div class="stat-item">
+      <div class="stat-num" data-count="127430">0</div>
+      <div class="stat-unit">m</div>
+      <div class="stat-cap" data-i18n="stats.measured">ÖLÇÜLƏN HÜNDÜRLÜK</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-count="8241">0</div>
+      <div class="stat-cap" data-i18n="stats.climbers">FƏAL DAĞÇI</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-count="47">0</div>
+      <div class="stat-cap" data-i18n="stats.peaks">FƏTH EDİLƏN ZİRVƏ</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-count="12800">0</div>
+      <div class="stat-cap" data-i18n="stats.cards">YARADILAN KART</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FEATURES — 3 immersive scroll sections
+       ============================================================ -->
+  <section id="features" class="features">
+
+    <div class="feature feature-split">
+      <div class="feature-media parallax" data-speed="0.15"></div>
+      <div class="feature-copy reveal">
+        <div class="feat-num">01</div>
+        <h2 data-i18n="feat1.title">PRECİZ<br>ÖLÇMƏ.</h2>
+        <p data-i18n="feat1.body">Peşəkar altimetrlərlə eyni dəqiqlik. GPS + Open-Meteo elevation API-si sənin dayandığın nöqtənin dəniz səviyyəsindən hündürlüyünü metrələrlə göstərir. Real-vaxt hava, külək, rütubət.</p>
+        <div class="feat-tags">
+          <span>GPS</span><span>ELEVATION API</span><span>REAL-VAXT</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature feature-full">
+      <div class="feature-full-bg parallax" data-speed="0.12"></div>
+      <div class="feature-full-scrim"></div>
+      <div class="feature-full-inner reveal">
+        <div class="feat-num light">02</div>
+        <h2 data-i18n="feat2.title">KARTINI<br>YARAT.</h2>
+        <p data-i18n="feat2.body">8 kinematik tema. Öz şəklinlə birləşdir. Bir kliklə PNG kimi endir və ya Zirvə lentasında paylaş. Hər zirvən sənət əsəri olur.</p>
+      </div>
+    </div>
+
+    <div class="feature feature-split reverse">
+      <div class="feature-media parallax" data-speed="0.15"></div>
+      <div class="feature-copy reveal">
+        <div class="feat-num">03</div>
+        <h2 data-i18n="feat3.title">İCMA. LİDERLİK.<br>MOTİVASİYA.</h2>
+        <p data-i18n="feat3.body">Digər dağçıları izlə. Onların zirvələrini bəyən. Liderlik tablosunda öz yerini tut. Rekordun bütün platforma boyu görünür.</p>
+        <div class="feat-tags">
+          <span>LENTA</span><span>TOP-100</span><span>BİLDİRİŞ</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       SCROLL-EXPAND MEDIA — image grows as you scroll through
+       ============================================================ -->
+  <section id="expandSection" class="expand-section">
+    <div class="expand-sticky">
+      <div class="expand-media" style="--exp:0">
+        <img alt="" loading="lazy">
+        <div class="expand-scrim"></div>
+        <div class="expand-hint" data-i18n="expand.hint">SCROLL İLƏ GENİŞLƏT</div>
+      </div>
+      <div class="expand-content">
+        <div class="expand-eye" data-i18n="expand.eye">HƏR ZİRVƏ BİR HEKAYƏ</div>
+        <h2 class="expand-title" data-i18n="expand.title">Dünyanı yuxarıdan gör.</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MANIFEST — kinetic text
+       ============================================================ -->
+  <section id="manifest" class="manifest">
+    <div class="manifest-inner reveal">
+      <div class="mf-caption" data-i18n="manifest.caption">MANİFEST</div>
+      <p class="mf-body">
+        <span class="mf-word" data-i18n="manifest.w1">YER</span>
+        <span class="mf-word" data-i18n="manifest.w2">ÜZÜ</span>
+        <span class="mf-word" data-i18n="manifest.w3">ÖLÇÜLÜR.</span>
+        <span class="mf-word accent" data-i18n="manifest.w4">SƏN</span>
+        <span class="mf-word accent" data-i18n="manifest.w5">DƏ</span>
+        <span class="mf-word accent" data-i18n="manifest.w6">ÖLÇ.</span>
+      </p>
+      <p class="mf-sub" data-i18n="manifest.sub">Hər zirvə — bir hekayə. Hər hündürlük — bir dəlil.<br>Zirvə səni izləyir. Sən Zirvə-ni bəslə.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CTA into app
+       ============================================================ -->
+  <section class="pre-app-cta reveal">
+    <canvas id="kineticCanvas" class="kinetic-canvas" aria-hidden="true"></canvas>
+    <div class="cta-inner">
+      <div class="cta-eye" data-i18n="cta.eye">İNDİ SIRA SƏNİNDİR</div>
+      <h2 class="cta-title" data-i18n="cta.title">Öz Zirvəni qeydə al ↓</h2>
+      <p class="cta-sub" data-i18n="cta.sub">Aşağıdakı app-də bir kliklə başla — GPS ilə hündürlüyünü tap, kart yarat, paylaş.</p>
+      <p class="cta-kinetic-hint" data-i18n="cta.kinetic">↑ Kursoru gəzdir, klik et — şəbəkə canlanır</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       EMBEDDED FUNCTIONAL APP — 4 tabs
+       ============================================================ -->
+  <section id="app" class="app-embed">
+    <div class="app-frame">
+
+      <div class="app-shell">
+
+        <header class="app-topbar">
+          <div class="app-brand">
+            <span class="app-mark">△</span>
+            <span class="app-name">ZİRVƏ APP</span>
+          </div>
+          <div class="gps-status" id="gpsStatus">
+            <span class="gps-dot"></span>
+            <span id="gpsStatusText" data-i18n="app.gpsSearching">GPS axtarılır</span>
+          </div>
+        </header>
+
+        <main class="app-main">
+
+          <!-- HÜNDÜRLÜK -->
+          <section class="screen active" id="screen-hundurluk" data-screen="hundurluk">
+            <div class="hcard">
+              <div class="hcard-head">
+                <span data-i18n="app.currentAlt">HAZIRKI HÜNDÜRLÜK</span>
+                <button class="icon-btn" id="refreshBtn" aria-label="Yenilə">
+                  <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M17.65 6.35A7.95 7.95 0 0012 4a8 8 0 108 8h-2a6 6 0 11-1.76-4.24L13 11h7V4l-2.35 2.35z"/></svg>
+                </button>
+              </div>
+              <div class="hcard-num">
+                <span id="altValue">—</span>
+                <span class="hcard-unit">m</span>
+              </div>
+              <div class="hcard-loc" id="heroLocation">
+                <svg viewBox="0 0 24 24" width="12" height="12"><path fill="currentColor" d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg>
+                <span id="locationText" data-i18n="app.grantLoc">Yerinizi tapmaq üçün icazə verin</span>
+              </div>
+              <button class="btn-primary" id="locateBtn" data-i18n="app.locate">HÜNDÜRLÜYÜMÜ TAP</button>
+            </div>
+
+            <div class="wx-grid">
+              <div class="wx-card"><div class="wx-i">🌡</div><div class="wx-l" data-i18n="app.temp">HAVA</div><div class="wx-v" id="wxTemp">—</div><div class="wx-s" id="wxDesc" data-i18n="app.loading">Yüklənir…</div></div>
+              <div class="wx-card"><div class="wx-i">💨</div><div class="wx-l" data-i18n="app.wind">KÜLƏK</div><div class="wx-v" id="wxWind">—</div><div class="wx-s">m/s</div></div>
+              <div class="wx-card"><div class="wx-i">💧</div><div class="wx-l" data-i18n="app.humidity">RÜTUBƏT</div><div class="wx-v" id="wxHumidity">—</div><div class="wx-s" data-i18n="app.relative">nisbi</div></div>
+              <div class="wx-card"><div class="wx-i">🧭</div><div class="wx-l" data-i18n="app.feels">HİSS OLUNAN</div><div class="wx-v" id="wxFeels">—</div><div class="wx-s">°C</div></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title" data-i18n="app.forecast">5 GÜNLÜK PROQNOZ</div>
+              <div class="forecast-row" id="forecastRow"><div class="fc-skel"></div></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title" data-i18n="app.compare">MƏŞHUR ZİRVƏLƏRLƏ MÜQAYİSƏ</div>
+              <div id="compareList"></div>
+            </div>
+
+            <div class="alert-box" id="sicknessAlert" hidden>
+              <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 2L1 21h22L12 2zm0 4.5L19.5 19h-15L12 6.5zM11 10v4h2v-4h-2zm0 6v2h2v-2h-2z"/></svg>
+              <span data-i18n="app.altSick">Bu hündürlükdə hava təzyiqi azalır — yüksəklik xəstəliyi riskinə diqqət edin.</span>
+            </div>
+          </section>
+
+          <!-- KART -->
+          <section class="screen" id="screen-kart" data-screen="kart">
+            <div class="section-head"><span class="sh-line"></span><span class="sh-text" data-i18n="app.pickLayout">DİZAYN SEÇ</span></div>
+            <div class="layout-grid" id="layoutGrid"></div>
+
+            <div class="section-head"><span class="sh-line"></span><span class="sh-text" data-i18n="app.yourPhoto">ÖZ ŞƏKLİN</span></div>
+            <label class="upload-zone" id="uploadZone">
+              <input type="file" id="photoInput" accept="image/*" hidden>
+              <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/></svg>
+              <span id="uploadLabel" data-i18n="app.uploadHint">Şəkil yüklə (istəyə bağlı)</span>
+            </label>
+
+            <div class="canvas-frame">
+              <canvas id="cardCanvas" width="600" height="750" class="card-canvas"></canvas>
+            </div>
+
+            <div class="card-actions">
+              <button class="btn-secondary" id="downloadCardBtn" data-i18n="app.download">PNG KİMİ ENDİR</button>
+              <button class="btn-primary" id="postCardBtn" data-i18n="app.share">SOSİALDA PAYLAŞ</button>
+            </div>
+          </section>
+
+          <!-- PROFİL -->
+          <section class="screen" id="screen-profil" data-screen="profil">
+            <div class="profile-cover">
+              <label class="avatar-wrap" id="avatarWrap">
+                <input type="file" id="avatarInput" accept="image/*" hidden>
+                <img id="avatarImg" alt="Avatar">
+                <span class="avatar-edit">✎</span>
+              </label>
+              <input class="username-input" id="usernameInput" value="Dağçı" maxlength="24">
+              <textarea class="bio-input" id="bioInput" maxlength="120" data-i18n-placeholder="app.bioPh" placeholder="Özün haqqında qısa bio yaz…"></textarea>
+            </div>
+
+            <div class="stat-row">
+              <div class="stat"><div class="stat-value" id="recordAlt">0</div><div class="stat-label" data-i18n="app.record">REKORD (m)</div></div>
+              <div class="stat-divider"></div>
+              <div class="stat"><div class="stat-value" id="postCount">0</div><div class="stat-label" data-i18n="app.posts">PAYLAŞIM</div></div>
+              <div class="stat-divider"></div>
+              <div class="stat"><div class="stat-value" id="rankValue">—</div><div class="stat-label" data-i18n="app.rank">SIRA</div></div>
+            </div>
+
+            <div class="section-head"><span class="sh-line"></span><span class="sh-text" data-i18n="app.myCards">KARTLARIM</span></div>
+            <div class="my-cards-grid" id="myCardsGrid">
+              <div class="empty-hint" data-i18n="app.noCards">Hələ kart yaratmamısan — Kart bölməsindən başla.</div>
+            </div>
+          </section>
+
+        </main>
+
+        <nav class="tabbar">
+          <button class="tab-btn active" data-target="hundurluk">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M14 6l-3.75 5 2.85 3.8-1.6 1.2C9.81 13.75 7 10 7 10l-6 8h22L14 6z"/></svg>
+            <span data-i18n="app.tabAlt">Hündürlük</span>
+          </button>
+          <button class="tab-btn" data-target="kart">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zM5 19l4.5-6 3.5 4.51 2.5-3.01L19 19H5z"/></svg>
+            <span data-i18n="app.tabCard">Kart</span>
+          </button>
+          <button class="tab-btn" data-target="profil">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 12c2.7 0 8 1.34 8 4v2H4v-2c0-2.66 5.3-4 8-4zm0-2a4 4 0 100-8 4 4 0 000 8z"/></svg>
+            <span data-i18n="app.tabProfile">Profil</span>
+          </button>
+        </nav>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SOCIAL — separate network experience
+       ============================================================ -->
+  <section id="social" class="social-section">
+    <div class="social-intro reveal">
+      <div class="si-eye" data-i18n="social.eye">ZİRVƏ İCMA</div>
+      <h2 class="si-title" data-i18n="social.title">Başqalarının zirvələrini kəşf et.</h2>
+      <p class="si-sub" data-i18n="social.sub">Dağçıların paylaşdığı kartlara bax, bəyən, şərh yaz və bəyəndiyini endir.</p>
+    </div>
+
+    <div class="social-frame">
+      <div class="social-shell">
+        <header class="social-topbar">
+          <div class="app-brand">
+            <span class="app-mark">△</span>
+            <span class="app-name" data-i18n="social.brand">ZİRVƏ SOSİAL</span>
+          </div>
+          <div class="social-nav">
+            <button class="snav-btn active" data-social="feed" data-i18n="app.feed">Lenta</button>
+            <button class="snav-btn" data-social="top" data-i18n="app.top">TOP</button>
+            <button class="snav-btn" data-social="notif" data-i18n="app.notif">Bildirişlər</button>
+          </div>
+        </header>
+
+        <div class="social-body">
+          <div class="social-pane active" id="pane-feed"><div class="feed-list" id="feedList"></div></div>
+          <div class="social-pane" id="pane-top">
+            <div class="section-head"><span class="sh-line"></span><span class="sh-text" data-i18n="app.leaderboard">LİDERLİK TABLOSU</span></div>
+            <div class="top-list" id="topList"></div>
+          </div>
+          <div class="social-pane" id="pane-notif">
+            <div class="section-head"><span class="sh-line"></span><span class="sh-text" data-i18n="app.notifications">BİLDİRİŞLƏR</span></div>
+            <div class="notif-list" id="notifList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+       ============================================================ -->
+  <footer class="site-foot">
+    <div class="foot-inner">
+      <div class="foot-brand">
+        <span class="foot-mark">△</span>
+        <span class="foot-name">ZİRVƏ</span>
+        <span class="foot-tag" data-i18n="foot.tag">Yer üzü ölçülür.</span>
+      </div>
+      <div class="foot-cols">
+        <div><div class="foot-h" data-i18n="foot.product">MƏHSUL</div><a href="#features" data-i18n="nav.features">Xüsusiyyətlər</a><a href="#app" data-i18n="nav.app">App</a></div>
+        <div><div class="foot-h" data-i18n="foot.info">İNFO</div><a href="#manifest" data-i18n="nav.manifest">Manifest</a><a href="#" data-i18n="foot.privacy">Məxfilik</a></div>
+        <div><div class="foot-h" data-i18n="foot.contact">ƏLAQƏ</div><a href="#" data-i18n="foot.instagram">Instagram</a><a href="#" data-i18n="foot.email">salam@zirve.az</a></div>
+      </div>
+    </div>
+    <div class="foot-strip">
+      <span>© 2025 ZİRVƏ</span>
+      <span data-i18n="foot.photos">Fotolar: Unsplash</span>
+    </div>
+  </footer>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+<script>
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+</script>
+</body>
+</html>
