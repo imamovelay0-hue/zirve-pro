@@ -594,212 +594,311 @@ function layoutFoto(ctx,W,H,O){
   }
 }
 
-/* -------- 1) POSTER -------- */
+/* -------- 1) POSTER — bold sunset gradient -------- */
 function layoutPoster(ctx,W,H,O){
   if(O.img){
     drawCover(ctx,O.img,0,0,W,H);
     const g=ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,'rgba(11,18,32,0.6)'); g.addColorStop(0.45,'rgba(11,18,32,0.1)'); g.addColorStop(1,'rgba(11,18,32,0.97)');
+    g.addColorStop(0,'rgba(255,61,46,0.35)'); g.addColorStop(0.4,'rgba(11,18,32,0.1)'); g.addColorStop(1,'rgba(11,18,32,0.95)');
     ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
   } else {
-    const g=ctx.createLinearGradient(0,0,W*0.4,H); g.addColorStop(0,'#0d1828'); g.addColorStop(1,'#1C2740');
+    const g=ctx.createLinearGradient(0,0,W,H);
+    g.addColorStop(0,'#FF6B35'); g.addColorStop(0.5,'#C9184A'); g.addColorStop(1,'#3A0CA3');
     ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
   }
-  // top accent bar
-  ctx.fillStyle='#FF3D2E'; ctx.fillRect(0,0,W,6);
+  // circular sun accent
+  const grad=ctx.createRadialGradient(W*0.85, H*0.15, 20, W*0.85, H*0.15, 220);
+  grad.addColorStop(0,'rgba(255,220,120,0.85)'); grad.addColorStop(1,'rgba(255,220,120,0)');
+  ctx.fillStyle=grad; ctx.fillRect(0,0,W,H);
+  // corner brackets
+  ctx.strokeStyle='rgba(245,245,240,0.9)'; ctx.lineWidth=3;
+  const b=44, bl=32;
+  ctx.beginPath();
+  ctx.moveTo(b,b+bl); ctx.lineTo(b,b); ctx.lineTo(b+bl,b);
+  ctx.moveTo(W-b-bl,b); ctx.lineTo(W-b,b); ctx.lineTo(W-b,b+bl);
+  ctx.moveTo(b,H-b-bl); ctx.lineTo(b,H-b); ctx.lineTo(b+bl,H-b);
+  ctx.moveTo(W-b-bl,H-b); ctx.lineTo(W-b,H-b); ctx.lineTo(W-b,H-b-bl);
+  ctx.stroke();
   ctx.textAlign='left'; ctx.fillStyle='#F5F5F0'; ctx.font='400 20px "JetBrains Mono", monospace';
-  ctx.fillText('△ ZİRVƏ', 44, 62);
-  ctx.textAlign='right'; ctx.font='400 13px "JetBrains Mono", monospace'; ctx.fillStyle='rgba(245,245,240,0.6)';
-  ctx.fillText(O.date, W-44, 62);
+  ctx.fillText('△ ZİRVƏ', 68, 90);
+  ctx.textAlign='right'; ctx.font='400 13px "JetBrains Mono", monospace'; ctx.fillStyle='rgba(245,245,240,0.85)';
+  ctx.fillText(O.date, W-68, 90);
   ctx.textAlign='center';
-  ctx.font='400 14px "JetBrains Mono", monospace'; ctx.fillStyle='rgba(245,245,240,0.6)';
-  ctx.fillText(O.cap, W/2, H*0.52);
-  ctx.fillStyle='#F5F5F0'; ctx.font='400 218px Anton, sans-serif';
-  ctx.shadowColor='rgba(0,0,0,0.5)'; ctx.shadowBlur=30;
-  ctx.fillText(O.altStr, W/2, H*0.70); ctx.shadowBlur=0;
-  ctx.font='700 28px Hanken Grotesk, sans-serif'; ctx.fillStyle='#FF3D2E';
-  ctx.fillText(O.meter, W/2, H*0.70+44);
-  ctx.font='400 18px Hanken Grotesk, sans-serif'; ctx.fillStyle='rgba(245,245,240,0.85)';
-  ctx.fillText(O.loc, W/2, H-52);
+  ctx.font='400 14px "JetBrains Mono", monospace'; ctx.fillStyle='rgba(245,245,240,0.7)';
+  ctx.fillText(O.cap, W/2, H*0.5);
+  ctx.fillStyle='#F5F5F0'; ctx.font='400 240px Anton, sans-serif';
+  ctx.shadowColor='rgba(0,0,0,0.55)'; ctx.shadowBlur=40; ctx.shadowOffsetY=6;
+  ctx.fillText(O.altStr, W/2, H*0.72); ctx.shadowBlur=0; ctx.shadowOffsetY=0;
+  ctx.font='700 30px Hanken Grotesk, sans-serif'; ctx.fillStyle='#FFD166';
+  ctx.fillText(O.meter, W/2, H*0.72+50);
+  ctx.font='400 18px Hanken Grotesk, sans-serif'; ctx.fillStyle='rgba(245,245,240,0.95)';
+  ctx.fillText(O.loc, W/2, H-74);
 }
 
-/* -------- 2) PASS (boarding pass) -------- */
+/* -------- 2) PASS (boarding pass) — cream + emerald accents -------- */
 function layoutPass(ctx,W,H,O){
-  ctx.fillStyle='#0B1220'; ctx.fillRect(0,0,W,H);
-  const m=38, cx=m, cy=m, cw=W-2*m, ch=H-2*m;
-  ctx.save(); roundRectPath(ctx,cx,cy,cw,ch,26); ctx.fillStyle='#F5F1E8'; ctx.fill();
+  const bg=ctx.createLinearGradient(0,0,0,H); bg.addColorStop(0,'#0A3B2E'); bg.addColorStop(1,'#062820');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+  const m=32, cx=m, cy=m, cw=W-2*m, ch=H-2*m;
+  ctx.save(); roundRectPath(ctx,cx,cy,cw,ch,28); ctx.fillStyle='#FDF6E3'; ctx.fill();
   ctx.clip();
-  const photoH=ch*0.44;
+  const photoH=ch*0.42;
   if(O.img){ drawCover(ctx,O.img,cx,cy,cw,photoH); }
-  else { const g=ctx.createLinearGradient(cx,cy,cx,cy+photoH); g.addColorStop(0,'#1C2740'); g.addColorStop(1,'#0B1220'); ctx.fillStyle=g; ctx.fillRect(cx,cy,cw,photoH); }
-  const sg=ctx.createLinearGradient(cx,cy,cx,cy+photoH); sg.addColorStop(0,'rgba(11,18,32,0.4)'); sg.addColorStop(1,'rgba(11,18,32,0.65)');
+  else {
+    const g=ctx.createLinearGradient(cx,cy,cx+cw,cy+photoH);
+    g.addColorStop(0,'#059669'); g.addColorStop(1,'#065f46');
+    ctx.fillStyle=g; ctx.fillRect(cx,cy,cw,photoH);
+  }
+  const sg=ctx.createLinearGradient(cx,cy,cx,cy+photoH);
+  sg.addColorStop(0,'rgba(6,40,32,0.55)'); sg.addColorStop(0.5,'rgba(6,40,32,0.15)'); sg.addColorStop(1,'rgba(6,40,32,0.75)');
   ctx.fillStyle=sg; ctx.fillRect(cx,cy,cw,photoH);
-  ctx.textAlign='left'; ctx.fillStyle='#F5F1E8'; ctx.font='400 18px "JetBrains Mono", monospace';
-  ctx.fillText('△ ZİRVƏ  ·  SUMMIT PASS', cx+26, cy+42);
-  ctx.font='400 13px "JetBrains Mono", monospace'; ctx.fillStyle='rgba(245,241,232,0.85)';
-  ctx.fillText(O.cap, cx+26, cy+photoH-24);
+  // header
+  ctx.textAlign='left'; ctx.fillStyle='#FDF6E3'; ctx.font='400 17px "JetBrains Mono", monospace';
+  ctx.fillText('△ ZİRVƏ', cx+28, cy+44);
+  ctx.textAlign='right'; ctx.fillStyle='rgba(253,246,227,0.85)'; ctx.font='400 12px "JetBrains Mono", monospace';
+  ctx.fillText('SUMMIT · PASS', cx+cw-28, cy+44);
+  ctx.textAlign='left'; ctx.font='400 13px "JetBrains Mono", monospace'; ctx.fillStyle='rgba(253,246,227,0.9)';
+  ctx.fillText(O.cap, cx+28, cy+photoH-24);
   ctx.restore();
   // perforation
   const perfY=cy+photoH;
-  ctx.fillStyle='#0B1220';
-  ctx.beginPath(); ctx.arc(cx,perfY,15,0,Math.PI*2); ctx.arc(cx+cw,perfY,15,0,Math.PI*2); ctx.fill();
-  ctx.strokeStyle='rgba(11,18,32,0.28)'; ctx.setLineDash([7,7]); ctx.lineWidth=2;
-  ctx.beginPath(); ctx.moveTo(cx+22,perfY); ctx.lineTo(cx+cw-22,perfY); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle='#0A3B2E';
+  ctx.beginPath(); ctx.arc(cx,perfY,16,0,Math.PI*2); ctx.arc(cx+cw,perfY,16,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='rgba(10,59,46,0.35)'; ctx.setLineDash([6,6]); ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(cx+24,perfY); ctx.lineTo(cx+cw-24,perfY); ctx.stroke(); ctx.setLineDash([]);
   // info
-  const ix=cx+30, iy=perfY+52;
+  const ix=cx+34, iy=perfY+50;
   ctx.textAlign='left';
-  ctx.fillStyle='#FF3D2E'; ctx.font='700 13px "JetBrains Mono", monospace';
-  ctx.fillText(O.meter+' · ALTITUDE', ix, iy);
-  ctx.fillStyle='#0B1220'; ctx.font='400 118px Anton, sans-serif';
-  ctx.fillText(O.altStr, ix-4, iy+108);
-  const row=iy+150;
-  ctx.fillStyle='#8a8578'; ctx.font='700 11px "JetBrains Mono", monospace';
-  ctx.fillText('DATE', ix, row); ctx.fillText('COORD', cx+cw*0.5, row);
-  ctx.fillStyle='#0B1220'; ctx.font='400 17px "JetBrains Mono", monospace';
-  ctx.fillText(O.date, ix, row+24); ctx.fillText(O.coord, cx+cw*0.5, row+24);
-  ctx.fillStyle='#8a8578'; ctx.font='700 11px "JetBrains Mono", monospace';
-  ctx.fillText('LOCATION', ix, row+58);
-  ctx.fillStyle='#0B1220'; ctx.font='400 16px Hanken Grotesk, sans-serif';
-  ctx.fillText(O.loc, ix, row+80);
-  // barcode
-  let bx=ix, by=cy+ch-56; const bw=cw-60;
-  let seed=(currentAlt||1)*7+13;
-  ctx.fillStyle='#0B1220';
-  while(bx<ix+bw){ seed=(seed*1103515245+12345)&0x7fffffff; const w=1+(seed>>8)%5; if((seed>>4)&1) ctx.fillRect(bx,by,w,34); bx+=w+2; }
-}
-
-/* -------- 3) MINIMAL -------- */
-function layoutMinimal(ctx,W,H,O){
-  ctx.fillStyle='#F5F1E8'; ctx.fillRect(0,0,W,H);
-  // photo strip at top
-  if(O.img){
-    ctx.save(); roundRectPath(ctx,44,44,W-88,H*0.38,14); ctx.clip();
-    drawCover(ctx,O.img,44,44,W-88,H*0.38); ctx.restore();
-    const og=ctx.createLinearGradient(44,44,44,44+H*0.38);
-    og.addColorStop(0,'rgba(245,241,232,0)'); og.addColorStop(1,'rgba(245,241,232,0.35)');
-    ctx.fillStyle=og; ctx.fillRect(44,44,W-88,H*0.38);
-  }
-  const ty=H*0.38+80;
-  ctx.textAlign='left';
-  ctx.fillStyle='#9a9488'; ctx.font='400 13px "JetBrains Mono", monospace';
-  ctx.fillText('△ ZİRVƏ  ·  '+O.date, 56, ty-28);
-  // accent line
-  ctx.fillStyle='#FF3D2E'; ctx.fillRect(56, ty-14, 5, 114);
-  ctx.fillStyle='#9a9488'; ctx.font='400 13px "JetBrains Mono", monospace';
-  ctx.fillText(O.cap, 78, ty+8);
-  ctx.fillStyle='#0B1220'; ctx.font='400 138px Anton, sans-serif';
-  ctx.fillText(O.altStr, 72, ty+108);
-  ctx.font='600 20px Hanken Grotesk, sans-serif'; ctx.fillStyle='#0B1220';
-  ctx.fillText(O.meter, 78, ty+140);
-  ctx.strokeStyle='rgba(11,18,32,0.15)'; ctx.lineWidth=1;
-  ctx.beginPath(); ctx.moveTo(56,H-72); ctx.lineTo(W-56,H-72); ctx.stroke();
-  ctx.fillStyle='#0B1220'; ctx.font='400 15px Hanken Grotesk, sans-serif';
-  ctx.fillText(O.loc, 56, H-44);
-  ctx.textAlign='right'; ctx.fillStyle='#9a9488'; ctx.font='400 13px "JetBrains Mono", monospace';
-  ctx.fillText(O.coord, W-56, H-44);
-}
-
-/* -------- 4) MAGAZINE -------- */
-function layoutMagazine(ctx,W,H,O){
-  if(O.img){ drawCover(ctx,O.img,0,0,W,H);
-    const g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'rgba(11,18,32,0.5)'); g.addColorStop(0.4,'rgba(11,18,32,0.1)'); g.addColorStop(1,'rgba(11,18,32,0.9)');
-    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-  } else { const g=ctx.createLinearGradient(0,0,W,H); g.addColorStop(0,'#243044'); g.addColorStop(1,'#0B1220'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H); }
-  // masthead
-  ctx.textAlign='center'; ctx.fillStyle='#F5F5F0'; ctx.font='400 96px Anton, sans-serif';
-  ctx.fillText('ZİRVƏ', W/2, 118);
-  ctx.textAlign='left'; ctx.fillStyle='rgba(245,245,240,0.75)'; ctx.font='400 13px "JetBrains Mono", monospace';
-  ctx.fillText('№ '+String((currentAlt%99)+1).padStart(2,'0')+'  ·  '+O.date, 44, 150);
-  ctx.textAlign='right';
-  ctx.fillText('EXPEDITION ISSUE', W-44, 150);
-  // coverlines
-  ctx.textAlign='left'; ctx.fillStyle='rgba(245,245,240,0.9)'; ctx.font='600 18px Hanken Grotesk, sans-serif';
-  ctx.fillText('› '+ (LANG==='tr'?'Zirveye giden yol':LANG==='en'?'The road to the summit':'Zirvəyə gedən yol'), 44, H*0.52);
-  ctx.fillText('› '+ (LANG==='tr'?'GPS ile yükseklik':LANG==='en'?'Altitude by GPS':'GPS ilə hündürlük'), 44, H*0.52+30);
-  // big number coverline
-  ctx.fillStyle='#FF3D2E'; ctx.font='700 16px "JetBrains Mono", monospace';
-  ctx.fillText(O.cap, 44, H-186);
-  ctx.fillStyle='#F5F5F0'; ctx.font='400 168px Anton, sans-serif';
-  ctx.textAlign='left'; ctx.fillText(O.altStr, 40, H-56);
+  // emerald accent chip
+  ctx.fillStyle='#059669'; roundRectPath(ctx,ix,iy-16,110,26,13); ctx.fill();
+  ctx.fillStyle='#FDF6E3'; ctx.font='700 12px "JetBrains Mono", monospace';
+  ctx.fillText('ALTITUDE', ix+16, iy+2);
+  ctx.fillStyle='#0A3B2E'; ctx.font='400 128px Anton, sans-serif';
+  ctx.fillText(O.altStr, ix-4, iy+120);
   const numW=ctx.measureText(O.altStr).width;
-  ctx.fillStyle='#FF3D2E'; ctx.font='700 26px Hanken Grotesk, sans-serif';
-  ctx.fillText(O.meter, 52+numW, H-56);
-  ctx.fillStyle='rgba(245,245,240,0.85)'; ctx.font='400 16px Hanken Grotesk, sans-serif';
-  ctx.fillText(O.loc, 52+numW, H-84);
+  ctx.font='700 22px Hanken Grotesk, sans-serif'; ctx.fillStyle='#059669';
+  ctx.fillText(O.meter, ix+numW+6, iy+120);
+  const row=iy+160;
+  ctx.fillStyle='#8a8578'; ctx.font='700 10px "JetBrains Mono", monospace';
+  ctx.fillText('DATE', ix, row); ctx.fillText('COORD', cx+cw*0.5, row);
+  ctx.fillStyle='#0A3B2E'; ctx.font='400 16px "JetBrains Mono", monospace';
+  ctx.fillText(O.date, ix, row+22); ctx.fillText(O.coord, cx+cw*0.5, row+22);
+  ctx.fillStyle='#8a8578'; ctx.font='700 10px "JetBrains Mono", monospace';
+  ctx.fillText('LOCATION', ix, row+52);
+  ctx.fillStyle='#0A3B2E'; ctx.font='400 15px Hanken Grotesk, sans-serif';
+  ctx.fillText(O.loc, ix, row+72);
+  // barcode
+  let bx=ix, by=cy+ch-52; const bw=cw-68;
+  let seed=(currentAlt||1)*7+13;
+  ctx.fillStyle='#0A3B2E';
+  while(bx<ix+bw){ seed=(seed*1103515245+12345)&0x7fffffff; const w=1+(seed>>8)%5; if((seed>>4)&1) ctx.fillRect(bx,by,w,32); bx+=w+2; }
 }
 
-/* -------- 5) TOPO (survey) -------- */
+/* -------- 3) MINIMAL — soft peach card -------- */
+
+function layoutMinimal(ctx,W,H,O){
+  const bg=ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#FFE5D9'); bg.addColorStop(1,'#FCD5CE');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+  if(O.img){
+    ctx.save();
+    ctx.shadowColor='rgba(90,40,20,0.18)'; ctx.shadowBlur=24; ctx.shadowOffsetY=8;
+    roundRectPath(ctx,44,60,W-88,H*0.40,20); ctx.fillStyle='#fff'; ctx.fill();
+    ctx.shadowBlur=0; ctx.shadowOffsetY=0;
+    ctx.clip();
+    drawCover(ctx,O.img,44,60,W-88,H*0.40);
+    ctx.restore();
+  } else {
+    ctx.save();
+    roundRectPath(ctx,44,60,W-88,H*0.40,20);
+    const pg=ctx.createLinearGradient(0,60,W,60+H*0.4);
+    pg.addColorStop(0,'#F48C7C'); pg.addColorStop(1,'#E63946');
+    ctx.fillStyle=pg; ctx.fill();
+    ctx.restore();
+  }
+  const ty=H*0.40+140;
+  ctx.textAlign='left';
+  ctx.fillStyle='#8B4513'; ctx.font='400 12px "JetBrains Mono", monospace';
+  ctx.fillText('△ ZİRVƏ  ·  '+O.date, 56, ty-42);
+  ctx.fillStyle='#E63946'; ctx.beginPath(); ctx.arc(62, ty-10, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle='#8B4513'; ctx.font='400 12px "JetBrains Mono", monospace';
+  ctx.fillText(O.cap, 76, ty-6);
+  ctx.fillStyle='#1D1D1B'; ctx.font='400 148px Anton, sans-serif';
+  ctx.fillText(O.altStr, 52, ty+100);
+  const numW=ctx.measureText(O.altStr).width;
+  ctx.font='700 22px Hanken Grotesk, sans-serif'; ctx.fillStyle='#E63946';
+  ctx.fillText(O.meter, 60+numW, ty+100);
+  ctx.strokeStyle='rgba(139,69,19,0.25)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(56,H-70); ctx.lineTo(W-56,H-70); ctx.stroke();
+  ctx.fillStyle='#1D1D1B'; ctx.font='600 15px Hanken Grotesk, sans-serif';
+  ctx.fillText(O.loc, 56, H-42);
+  ctx.textAlign='right'; ctx.fillStyle='#8B4513'; ctx.font='400 12px "JetBrains Mono", monospace';
+  ctx.fillText(O.coord, W-56, H-42);
+}
+
+/* -------- 4) MAGAZINE — bold editorial with yellow flash -------- */
+function layoutMagazine(ctx,W,H,O){
+  if(O.img){
+    drawCover(ctx,O.img,0,0,W,H);
+    const g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'rgba(11,18,32,0.55)'); g.addColorStop(0.35,'rgba(11,18,32,0.05)'); g.addColorStop(1,'rgba(11,18,32,0.95)');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  } else {
+    const g=ctx.createLinearGradient(0,0,W,H);
+    g.addColorStop(0,'#1E3A8A'); g.addColorStop(1,'#0F172A');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  }
+  // yellow flash banner
+  ctx.save();
+  ctx.translate(W-140, 110); ctx.rotate(-Math.PI/12);
+  ctx.fillStyle='#FBBF24'; roundRectPath(ctx,-70,-30,140,60,6); ctx.fill();
+  ctx.fillStyle='#0F172A'; ctx.font='700 14px "JetBrains Mono", monospace'; ctx.textAlign='center';
+  ctx.fillText('ISSUE №'+String((currentAlt%99)+1).padStart(2,'0'), 0, -5);
+  ctx.font='400 11px "JetBrains Mono", monospace';
+  ctx.fillText(O.date, 0, 14);
+  ctx.restore();
+  // masthead
+  ctx.textAlign='left'; ctx.fillStyle='#F5F5F0'; ctx.font='400 112px Anton, sans-serif';
+  ctx.fillText('ZİRVƏ', 40, 132);
+  // subtitle
+  ctx.fillStyle='rgba(245,245,240,0.7)'; ctx.font='400 13px "JetBrains Mono", monospace';
+  ctx.fillText('EXPEDITION ISSUE  ·  MOUNTAIN JOURNAL', 44, 158);
+  // coverlines with red bullets
+  ctx.fillStyle='#FBBF24'; ctx.beginPath(); ctx.arc(52, H*0.5-6, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(245,245,240,0.95)'; ctx.font='600 19px Hanken Grotesk, sans-serif';
+  ctx.fillText(LANG==='tr'?'Zirveye giden yol':LANG==='en'?'The road to the summit':'Zirvəyə gedən yol', 68, H*0.5);
+  ctx.fillStyle='#FBBF24'; ctx.beginPath(); ctx.arc(52, H*0.5+28, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle='rgba(245,245,240,0.95)';
+  ctx.fillText(LANG==='tr'?'GPS ile yükseklik':LANG==='en'?'Altitude by GPS':'GPS ilə hündürlük', 68, H*0.5+34);
+  // bottom big number block
+  ctx.fillStyle='#FBBF24'; ctx.font='700 15px "JetBrains Mono", monospace';
+  ctx.fillText(O.cap, 44, H-196);
+  ctx.fillStyle='#F5F5F0'; ctx.font='400 184px Anton, sans-serif';
+  ctx.shadowColor='rgba(0,0,0,0.6)'; ctx.shadowBlur=20;
+  ctx.fillText(O.altStr, 40, H-52); ctx.shadowBlur=0;
+  const numW=ctx.measureText(O.altStr).width;
+  ctx.fillStyle='#FBBF24'; ctx.font='700 26px Hanken Grotesk, sans-serif';
+  ctx.fillText(O.meter, 52+numW, H-52);
+  ctx.fillStyle='rgba(245,245,240,0.85)'; ctx.font='400 15px Hanken Grotesk, sans-serif';
+  ctx.fillText(O.loc, 52+numW, H-80);
+}
+
+/* -------- 5) TOPO — neon cyan grid on deep purple -------- */
 function layoutTopo(ctx,W,H,O){
-  ctx.fillStyle='#0E1B24'; ctx.fillRect(0,0,W,H);
-  if(O.img){ ctx.save(); ctx.globalAlpha=0.28; drawCover(ctx,O.img,0,0,W,H); ctx.restore(); }
-  // contour field
-  ctx.save(); ctx.strokeStyle='#7FDDEB'; ctx.lineWidth=1.2;
+  const bg=ctx.createRadialGradient(W*0.5,H*0.44,50,W*0.5,H*0.44,W);
+  bg.addColorStop(0,'#2D1B4E'); bg.addColorStop(1,'#0A0416');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+  if(O.img){ ctx.save(); ctx.globalAlpha=0.20; drawCover(ctx,O.img,0,0,W,H); ctx.restore(); }
+  // radial contour rings
+  ctx.save();
   const ccx=W*0.5, ccy=H*0.44;
-  for(let i=1;i<=13;i++){
-    ctx.globalAlpha = i<=3 ? 0.55 : 0.16;
-    ctx.strokeStyle = i<=3 ? '#FF3D2E' : '#7FDDEB';
+  for(let i=1;i<=14;i++){
+    ctx.globalAlpha = i<=3 ? 0.85 : (i<=6 ? 0.35 : 0.14);
+    ctx.strokeStyle = i<=3 ? '#FF006E' : (i<=6 ? '#00F5FF' : '#7FDDEB');
+    ctx.lineWidth = i<=3 ? 2 : 1;
     ctx.beginPath();
-    for(let a=0;a<=40;a++){
-      const ang=(a/40)*Math.PI*2, rr=18+i*26+Math.sin(ang*3+i)*9+Math.cos(ang*2+i*0.5)*6;
+    for(let a=0;a<=48;a++){
+      const ang=(a/48)*Math.PI*2, rr=18+i*24+Math.sin(ang*3+i)*8+Math.cos(ang*2+i*0.5)*5;
       const x=ccx+Math.cos(ang)*rr, y=ccy+Math.sin(ang)*rr*0.82;
       a===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
     }
     ctx.closePath(); ctx.stroke();
   }
   ctx.restore();
-  ctx.textAlign='left'; ctx.fillStyle='#F5F5F0'; ctx.font='400 22px "JetBrains Mono", monospace';
+  // crosshair at center
+  ctx.strokeStyle='#FF006E'; ctx.lineWidth=1.5; ctx.globalAlpha=0.7;
+  ctx.beginPath();
+  ctx.moveTo(ccx-14,ccy); ctx.lineTo(ccx-4,ccy);
+  ctx.moveTo(ccx+4,ccy); ctx.lineTo(ccx+14,ccy);
+  ctx.moveTo(ccx,ccy-14); ctx.lineTo(ccx,ccy-4);
+  ctx.moveTo(ccx,ccy+4); ctx.lineTo(ccx,ccy+14);
+  ctx.stroke(); ctx.globalAlpha=1;
+  // header
+  ctx.textAlign='left'; ctx.fillStyle='#00F5FF'; ctx.font='400 22px "JetBrains Mono", monospace';
   ctx.fillText('△ ZİRVƏ', 44, 70);
-  ctx.textAlign='right'; ctx.fillStyle='#7FDDEB'; ctx.font='400 15px "JetBrains Mono", monospace';
-  ctx.fillText(O.coord, W-44, 70);
+  ctx.textAlign='right'; ctx.fillStyle='#FF006E'; ctx.font='400 14px "JetBrains Mono", monospace';
+  ctx.fillText('◉ '+O.coord, W-44, 70);
+  // corner ticks
+  ctx.strokeStyle='#00F5FF'; ctx.lineWidth=2; ctx.globalAlpha=0.6;
+  const tk=18;
+  ctx.beginPath();
+  ctx.moveTo(44,H-44); ctx.lineTo(44+tk,H-44); ctx.moveTo(44,H-44); ctx.lineTo(44,H-44-tk);
+  ctx.moveTo(W-44,H-44); ctx.lineTo(W-44-tk,H-44); ctx.moveTo(W-44,H-44); ctx.lineTo(W-44,H-44-tk);
+  ctx.stroke(); ctx.globalAlpha=1;
   // center readout
-  ctx.textAlign='center'; ctx.fillStyle='rgba(245,245,240,0.7)'; ctx.font='400 15px "JetBrains Mono", monospace';
-  ctx.fillText(O.cap, W/2, H*0.44-96);
-  ctx.fillStyle='#F5F5F0'; ctx.font='400 150px Anton, sans-serif';
-  ctx.shadowColor='rgba(14,27,36,0.9)'; ctx.shadowBlur=24;
-  ctx.fillText(O.altStr, W/2, H*0.44+50); ctx.shadowBlur=0;
-  ctx.fillStyle='#FF3D2E'; ctx.font='700 24px Hanken Grotesk, sans-serif';
-  ctx.fillText(O.meter, W/2, H*0.44+86);
-  ctx.fillStyle='#F5F5F0'; ctx.font='400 18px Hanken Grotesk, sans-serif';
+  ctx.textAlign='center'; ctx.fillStyle='rgba(0,245,255,0.75)'; ctx.font='400 14px "JetBrains Mono", monospace';
+  ctx.fillText(O.cap, W/2, H*0.44-98);
+  ctx.fillStyle='#F5F5F0'; ctx.font='400 160px Anton, sans-serif';
+  ctx.shadowColor='rgba(0,245,255,0.7)'; ctx.shadowBlur=28;
+  ctx.fillText(O.altStr, W/2, H*0.44+52); ctx.shadowBlur=0;
+  ctx.fillStyle='#FF006E'; ctx.font='700 24px Hanken Grotesk, sans-serif';
+  ctx.fillText(O.meter, W/2, H*0.44+88);
+  ctx.fillStyle='#F5F5F0'; ctx.font='400 17px Hanken Grotesk, sans-serif';
   ctx.fillText(O.loc, W/2, H-58);
 }
 
-/* -------- 6) RETRO (vintage park poster) -------- */
+/* -------- 6) RETRO — vintage travel poster, rich sunset -------- */
 function layoutRetro(ctx,W,H,O){
   // sky
   const sky=ctx.createLinearGradient(0,0,0,H*0.7);
-  sky.addColorStop(0,'#F2D8A7'); sky.addColorStop(0.5,'#E9A863'); sky.addColorStop(1,'#D97742');
+  sky.addColorStop(0,'#FFD3A5'); sky.addColorStop(0.35,'#FD9853'); sky.addColorStop(0.7,'#FF6B6B'); sky.addColorStop(1,'#8E44AD');
   ctx.fillStyle=sky; ctx.fillRect(0,0,W,H);
-  // sun
-  ctx.fillStyle='#F6E3B0'; ctx.beginPath(); ctx.arc(W/2,H*0.34,96,0,Math.PI*2); ctx.fill();
+  // sun disc
+  const sunG=ctx.createRadialGradient(W/2,H*0.32,20,W/2,H*0.32,110);
+  sunG.addColorStop(0,'#FFF8DC'); sunG.addColorStop(0.7,'#FFD166'); sunG.addColorStop(1,'#FF9F1C');
+  ctx.fillStyle=sunG; ctx.beginPath(); ctx.arc(W/2,H*0.32,100,0,Math.PI*2); ctx.fill();
+  // sun stripes (horizontal cutouts)
+  ctx.fillStyle='#FD9853';
+  for(let i=0;i<5;i++){
+    const y=H*0.32+20+i*14;
+    ctx.fillRect(W/2-100, y, 200, 5);
+  }
   // sun rays
-  ctx.strokeStyle='rgba(246,227,176,0.5)'; ctx.lineWidth=6;
-  for(let i=0;i<16;i++){ const a=i/16*Math.PI*2; ctx.beginPath(); ctx.moveTo(W/2+Math.cos(a)*110,H*0.34+Math.sin(a)*110); ctx.lineTo(W/2+Math.cos(a)*150,H*0.34+Math.sin(a)*150); ctx.stroke(); }
+  ctx.strokeStyle='rgba(255,248,220,0.4)'; ctx.lineWidth=5;
+  for(let i=0;i<20;i++){
+    const a=i/20*Math.PI*2;
+    ctx.beginPath();
+    ctx.moveTo(W/2+Math.cos(a)*120,H*0.32+Math.sin(a)*120);
+    ctx.lineTo(W/2+Math.cos(a)*170,H*0.32+Math.sin(a)*170);
+    ctx.stroke();
+  }
   // mountain bands
-  const bands=[['#C97B4A',0.56],['#9C5533',0.66],['#6E3A22',0.78],['#4A2616',0.9]];
+  const bands=[['#C44536',0.55],['#883D26',0.66],['#5A2A18',0.78],['#2F1810',0.9]];
   bands.forEach(([col,baseY],idx)=>{
     ctx.fillStyle=col; ctx.beginPath(); ctx.moveTo(0,H);
     ctx.lineTo(0,H*baseY);
     const peaks=3+idx; const seedbase=idx*13+2;
     for(let p=0;p<=peaks;p++){
       const x=W*(p/peaks); const jag=Math.sin(p*2.3+seedbase)*40;
-      ctx.lineTo(x, H*baseY - Math.abs(Math.sin(p*1.7+seedbase))*90 + jag*0.3);
+      ctx.lineTo(x, H*baseY - Math.abs(Math.sin(p*1.7+seedbase))*100 + jag*0.3);
       if(p<peaks) ctx.lineTo(W*((p+0.5)/peaks), H*baseY + 20);
     }
     ctx.lineTo(W,H*baseY); ctx.lineTo(W,H); ctx.closePath(); ctx.fill();
   });
+  // snow caps on front range (subtle white streaks)
+  ctx.fillStyle='rgba(255,255,255,0.85)';
+  for(let p=0;p<4;p++){
+    const x=W*(p/3), y=H*0.78 - Math.abs(Math.sin(p*1.7+2*13+2))*100;
+    ctx.beginPath();
+    ctx.moveTo(x-24,y+22); ctx.lineTo(x,y-4); ctx.lineTo(x+24,y+22); ctx.closePath(); ctx.fill();
+  }
   // top ribbon
-  ctx.fillStyle='#2B1A10'; ctx.fillRect(0,44,W,54);
-  ctx.textAlign='center'; ctx.fillStyle='#F2D8A7'; ctx.font='400 34px Anton, sans-serif';
-  ctx.fillText('Z I R V Ə', W/2, 84);
-  // number badge
-  ctx.fillStyle='#F2D8A7'; ctx.textAlign='center';
-  ctx.font='400 120px Anton, sans-serif';
-  ctx.strokeStyle='#2B1A10'; ctx.lineWidth=8; ctx.lineJoin='round';
-  ctx.strokeText(O.altStr, W/2, H-110); ctx.fillText(O.altStr, W/2, H-110);
-  ctx.fillStyle='#2B1A10'; ctx.font='700 22px Hanken Grotesk, sans-serif';
+  ctx.fillStyle='#2F1810'; ctx.fillRect(0,44,W,58);
+  ctx.textAlign='center'; ctx.fillStyle='#FFD3A5'; ctx.font='400 36px Anton, sans-serif';
+  ctx.fillText('Z · I · R · V · Ə', W/2, 86);
+  // decorative dashes on ribbon
+  ctx.strokeStyle='rgba(255,211,165,0.4)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(30,72); ctx.lineTo(80,72); ctx.moveTo(W-80,72); ctx.lineTo(W-30,72); ctx.stroke();
+  // number badge with double outline
+  ctx.textAlign='center';
+  ctx.font='400 136px Anton, sans-serif';
+  ctx.strokeStyle='#2F1810'; ctx.lineWidth=10; ctx.lineJoin='round';
+  ctx.strokeText(O.altStr, W/2, H-110);
+  ctx.fillStyle='#FFD3A5'; ctx.fillText(O.altStr, W/2, H-110);
+  ctx.fillStyle='#2F1810'; ctx.font='700 22px Hanken Grotesk, sans-serif';
   ctx.fillText(O.meter+' · '+O.cap, W/2, H-70);
-  ctx.font='400 17px Hanken Grotesk, sans-serif'; ctx.fillStyle='#3a2214';
-  ctx.fillText(O.loc, W/2, H-42);
+  ctx.font='400 16px Hanken Grotesk, sans-serif'; ctx.fillStyle='#3a2214';
+  ctx.fillText('« '+O.loc+' »', W/2, H-42);
 }
 
 const LAYOUTS = [
