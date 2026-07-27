@@ -15,6 +15,51 @@ const store = {
 };
 
 /* ============================================================
+   SUPABASE CLOUD
+   ============================================================ */
+function deviceId(){
+  let id = store.get('deviceId', null);
+  if(!id){ id = 'd_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36); store.set('deviceId', id); }
+  return id;
+}
+const DEVICE_ID = deviceId();
+let SB = null;
+let dbPosts = [];
+window.addEventListener('supabase-ready', ()=>{ SB = window.SUPABASE; loadDbPosts(); subscribeRealtime(); });
+
+async function loadDbPosts(){
+  if(!SB) return;
+  try{
+    const { data: posts } = await SB.from('posts').select('*').order('created_at', {ascending:false}).limit(50);
+    const ids = (posts||[]).map(p=>p.id);
+    let likesByPost = {}, myLiked = new Set(), commentsByPost = {};
+    if(ids.length){
+      const { data: likes } = await SB.from('likes').select('*').in('post_id', ids);
+      (likes||[]).forEach(l=>{ likesByPost[l.post_id]=(likesByPost[l.post_id]||0)+1; if(l.device_id===DEVICE_ID) myLiked.add(l.post_id); });
+      const { data: cmts } = await SB.from('comments').select('*').in('post_id', ids).order('created_at',{ascending:true});
+      (cmts||[]).forEach(c=>{ (commentsByPost[c.post_id]=commentsByPost[c.post_id]||[]).push({user:c.user_name, avatar:c.avatar, text:c.content}); });
+    }
+    dbPosts = (posts||[]).map(p=>({
+      id: 'db-'+p.id, dbId: p.id,
+      user: p.user_name, avatar: p.avatar, img: p.img, alt: p.alt||0,
+      caption: p.caption||'', time: p.time_str||'now',
+      likes: likesByPost[p.id]||0, liked: myLiked.has(p.id),
+      comments: commentsByPost[p.id]||[],
+    }));
+    if(typeof renderFeed==='function') renderFeed();
+  }catch(e){ console.warn('loadDbPosts', e); }
+}
+
+function subscribeRealtime(){
+  if(!SB) return;
+  SB.channel('social')
+    .on('postgres_changes', {event:'*', schema:'public', table:'posts'}, ()=> loadDbPosts())
+    .on('postgres_changes', {event:'*', schema:'public', table:'likes'}, ()=> loadDbPosts())
+    .on('postgres_changes', {event:'*', schema:'public', table:'comments'}, ()=> loadDbPosts())
+    .subscribe();
+}
+
+/* ============================================================
    i18n — AZ / TR / EN
    ============================================================ */
 const I18N = {
@@ -984,15 +1029,25 @@ function initKart(){
     toast(t('toast.downloaded'));
   });
 
-  document.getElementById('postCardBtn').addEventListener('click', ()=>{
-    const dataUrl = document.getElementById('cardCanvas').toDataURL('image/jpeg', 0.85);
+  document.getElementById('postCardBtn').addEventListener('click', async ()=>{
+    const dataUrl = document.getElementById('cardCanvas').toDataURL('image/jpeg', 0.75);
     const cards = store.get('myCards', []);
     cards.unshift({id:Date.now(), img:dataUrl, alt:currentAlt, layout:selectedLayout.name});
     store.set('myCards', cards);
     const profile = getProfile();
-    const posts = store.get('posts', []);
-    posts.unshift({id:Date.now(), user:profile.username, avatar:profile.avatar, img:dataUrl, alt:currentAlt, likes:0, liked:false, comments:[], time:'now'});
-    store.set('posts', posts);
+    if(SB){
+      const { error } = await SB.from('posts').insert({
+        user_name: profile.username, avatar: profile.avatar,
+        img: dataUrl, alt: currentAlt, caption: '',
+        device_id: DEVICE_ID, time_str: 'now'
+      });
+      if(error){ console.warn('post insert', error); toast('Xəta: '+error.message); return; }
+      await loadDbPosts();
+    } else {
+      const posts = store.get('posts', []);
+      posts.unshift({id:Date.now(), user:profile.username, avatar:profile.avatar, img:dataUrl, alt:currentAlt, likes:0, liked:false, comments:[], time:'now'});
+      store.set('posts', posts);
+    }
     toast(t('toast.shared'));
     renderSocial();
     document.getElementById('social').scrollIntoView({behavior:'smooth'});
@@ -1093,7 +1148,8 @@ function timeShort(k){
 }
 
 function renderFeed(){
-  const posts = store.get('posts', []);
+  const seed = store.get('posts', []);
+  const posts = [...dbPosts, ...seed];
   const list = document.getElementById('feedList');
   if(posts.length === 0){ list.innerHTML = `<div class="empty-hint">${t('app.noPosts')}</div>`; return; }
   const locale = LANG==='en'?'en-US':LANG==='tr'?'tr-TR':'az-AZ';
@@ -1129,14 +1185,18 @@ function renderFeed(){
       </div>`;
 
     const likeBtn = el.querySelector('.like-btn');
-    likeBtn.addEventListener('click', ()=>{
+    likeBtn.addEventListener('click', async ()=>{
       p.liked = !p.liked; p.likes += p.liked ? 1 : -1;
-      store.set('posts', posts);
-      // update in place so the burst animation can play
       likeBtn.classList.toggle('liked', p.liked);
       likeBtn.setAttribute('aria-pressed', String(p.liked));
       likeBtn.querySelector('span').textContent = p.likes;
       if(p.liked){ likeBtn.classList.remove('pop'); void likeBtn.offsetWidth; likeBtn.classList.add('pop'); }
+      if(p.dbId && SB){
+        if(p.liked) await SB.from('likes').insert({post_id:p.dbId, device_id:DEVICE_ID});
+        else await SB.from('likes').delete().eq('post_id',p.dbId).eq('device_id',DEVICE_ID);
+      } else {
+        store.set('posts', seed);
+      }
     });
     el.querySelector('.comment-btn').addEventListener('click', ()=>{
       if(openComments.has(p.id)) openComments.delete(p.id); else openComments.add(p.id);
@@ -1147,12 +1207,18 @@ function renderFeed(){
 
     const box = el.querySelector('.post-comments');
     const input = box.querySelector('.comment-input');
-    const send = ()=>{
+    const send = async ()=>{
       const txt = input.value.trim(); if(!txt) return;
       const profile = getProfile();
       p.comments = comments; p.comments.push({user:profile.username, avatar:profile.avatar, text:txt});
       openComments.add(p.id);
-      store.set('posts', posts); renderFeed();
+      input.value = '';
+      if(p.dbId && SB){
+        await SB.from('comments').insert({post_id:p.dbId, user_name:profile.username, avatar:profile.avatar, content:txt, device_id:DEVICE_ID});
+      } else {
+        store.set('posts', seed);
+      }
+      renderFeed();
     };
     box.querySelector('.comment-send').addEventListener('click', send);
     input.addEventListener('keydown', (e)=>{ if(e.key==='Enter') send(); });

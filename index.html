@@ -409,6 +409,14 @@
 
 <div class="toast" id="toast"></div>
 
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+window.SUPABASE = createClient(
+  'https://dgvbdnvmsvdidoltjzop.supabase.co',
+  'sb_publishable_-E7uyQxbBM8Q3Ad_NsVyMA_IFWv0viX'
+);
+window.dispatchEvent(new Event('supabase-ready'));
+</script>
 <script src="app.js"></script>
 <script>
 if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
