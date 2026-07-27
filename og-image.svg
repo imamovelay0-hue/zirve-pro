@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0d2137"/>
+      <stop offset="0.6" stop-color="#0e2d45"/>
+      <stop offset="1" stop-color="#070b14"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.75" cy="0.25" r="0.5">
+      <stop offset="0" stop-color="rgba(255,61,46,0.35)"/>
+      <stop offset="1" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+    <linearGradient id="fade" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="rgba(11,18,32,0.9)"/>
+      <stop offset="1" stop-color="rgba(11,18,32,0)"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#sky)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <!-- Mountains -->
+  <polygon points="0,500 200,300 380,420 560,240 760,380 940,220 1100,340 1200,300 1200,630 0,630" fill="#132a44" opacity="0.85"/>
+  <polygon points="0,560 180,400 360,480 540,340 720,460 900,320 1080,440 1200,400 1200,630 0,630" fill="#0a1a2e" opacity="0.9"/>
+  <polygon points="0,630 240,500 460,560 700,460 920,540 1200,480 1200,630" fill="#050c17"/>
+  <rect width="1200" height="630" fill="url(#fade)" opacity="0.5"/>
+  <!-- Stars -->
+  <circle cx="180" cy="120" r="1.5" fill="rgba(245,245,240,0.7)"/>
+  <circle cx="320" cy="80" r="1" fill="rgba(245,245,240,0.5)"/>
+  <circle cx="640" cy="140" r="1.2" fill="rgba(245,245,240,0.6)"/>
+  <circle cx="880" cy="90" r="1" fill="rgba(245,245,240,0.4)"/>
+  <circle cx="1050" cy="180" r="1.5" fill="rgba(245,245,240,0.5)"/>
+  <!-- Logo -->
+  <polygon points="80,90 96,66 112,90" fill="none" stroke="#FF3D2E" stroke-width="3.5"/>
+  <text x="130" y="94" font-family="Hanken Grotesk, Arial, sans-serif" font-size="30" font-weight="700" fill="#F5F5F0" letter-spacing="3">ZİRVƏ</text>
+  <!-- Title -->
+  <text x="80" y="380" font-family="Anton, Impact, sans-serif" font-size="110" fill="#F5F5F0" letter-spacing="-2">YÜKSƏKLİYİNİ</text>
+  <text x="80" y="470" font-family="Anton, Impact, sans-serif" font-size="110" fill="#F5F5F0" letter-spacing="-2">ÖLÇ. PAYLAŞ.</text>
+  <text x="80" y="560" font-family="Anton, Impact, sans-serif" font-size="110" fill="#FF3D2E" letter-spacing="-2">FƏTH ET.</text>
+  <!-- Bottom bar -->
+  <rect x="0" y="605" width="1200" height="25" fill="#FF3D2E"/>
+</svg>
