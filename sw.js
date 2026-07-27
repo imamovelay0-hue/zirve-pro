@@ -1,4 +1,4 @@
-const CACHE = 'zirve-v4';
+const CACHE = 'zirve-v5';
 const ASSETS = ['./', './index.html', './styles.css', './app.js', './manifest.json'];
 
 self.addEventListener('install', e => {
