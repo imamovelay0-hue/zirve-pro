@@ -151,17 +151,17 @@ const I18N = {
 Object.assign(I18N.az, {
   'nav.social':'Sosial','app.pickLayout':'DİZAYN SEÇ','app.commentPh':'Şərh yaz…','app.send':'Göndər',
   'social.eye':'ZİRVƏ İCMA','social.title':'Başqalarının zirvələrini kəşf et.','social.sub':'Dağçıların paylaşdığı kartlara bax, bəyən, şərh yaz və bəyəndiyini endir.','social.brand':'ZİRVƏ SOSİAL',
-  'expand.hint':'SCROLL İLƏ GENİŞLƏT','expand.eye':'HƏR ZİRVƏ BİR HEKAYƏ','expand.title':'Dünyanı yuxarıdan gör.','cta.kinetic':'↑ Kursoru gəzdir, klik et — şəbəkə canlanır',
+  'expand.hint':'SCROLL İLƏ GENİŞLƏT','expand.eye':'HƏR ZİRVƏ BİR HEKAYƏ','expand.title':'Dünyanı yuxarıdan gör.','cta.kinetic':'↑ Kursoru gəzdir, klik et — şəbəkə canlanır','apk.title':'Android üçün yüklə','apk.meta':'APK · 1 MB · pulsuz','apk.note':'Faylı aç → «Naməlum mənbəyə icazə ver» → Quraşdır',
 });
 Object.assign(I18N.tr, {
   'nav.social':'Sosyal','app.pickLayout':'TASARIM SEÇ','app.commentPh':'Yorum yaz…','app.send':'Gönder',
   'social.eye':'ZİRVƏ TOPLULUK','social.title':'Başkalarının zirvelerini keşfet.','social.sub':'Dağcıların paylaştığı kartlara bak, beğen, yorum yap ve beğendiğini indir.','social.brand':'ZİRVƏ SOSYAL',
-  'expand.hint':'KAYDIRARAK BÜYÜT','expand.eye':'HER ZİRVE BİR HİKAYE','expand.title':'Dünyayı yukarıdan gör.','cta.kinetic':'↑ İmleci gezdir, tıkla — ızgara canlanır',
+  'expand.hint':'KAYDIRARAK BÜYÜT','expand.eye':'HER ZİRVE BİR HİKAYE','expand.title':'Dünyayı yukarıdan gör.','cta.kinetic':'↑ İmleci gezdir, tıkla — ızgara canlanır','apk.title':'Android için indir','apk.meta':'APK · 1 MB · ücretsiz','apk.note':'Dosyayı aç → «Bilinmeyen kaynağa izin ver» → Kur',
 });
 Object.assign(I18N.en, {
   'nav.social':'Social','app.pickLayout':'PICK A DESIGN','app.commentPh':'Write a comment…','app.send':'Send',
   'social.eye':'ZİRVƏ COMMUNITY','social.title':"Discover others' summits.",'social.sub':'Browse the cards climbers share, like, comment, and download your favorites.','social.brand':'ZİRVƏ SOCIAL',
-  'expand.hint':'SCROLL TO EXPAND','expand.eye':'EVERY PEAK A STORY','expand.title':'See the world from above.','cta.kinetic':'↑ Move your cursor, click — the grid comes alive',
+  'expand.hint':'SCROLL TO EXPAND','expand.eye':'EVERY PEAK A STORY','expand.title':'See the world from above.','cta.kinetic':'↑ Move your cursor, click — the grid comes alive','apk.title':'Download for Android','apk.meta':'APK · 1 MB · free','apk.note':'Open the file → allow "Unknown sources" → Install',
 });
 
 const DAYNAMES = {
