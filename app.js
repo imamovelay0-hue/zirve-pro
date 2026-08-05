@@ -460,6 +460,8 @@ async function locate(){
       ]);
     }catch(e){ toast(t('toast.fetchErr')); }
     finally{
+      // Əsas dönüşüm: GPS işlədi, istifadəçi real hündürlüyünü gördü
+      track('gps_located', { altitude: currentAlt });
       clearInterval(scrambleIv);
       setHeroDigits(currentAlt);
       refreshBtn.classList.remove('spinning');
@@ -476,6 +478,8 @@ async function locate(){
     heroBtn.textContent = t('hero.locate');
     setGpsStatus('err', 'app.gpsError');
     document.getElementById('locationText').textContent = t('app.gpsError');
+    // Bura çoxalarsa problem icazə mətnindədir, marketinqdə yox
+    track('gps_denied');
     toast(t('toast.gpsDenied'));
   }, {enableHighAccuracy:true, timeout:12000, maximumAge:60000});
 }
@@ -1077,6 +1081,7 @@ function initKart(){
   document.getElementById('downloadCardBtn').addEventListener('click', ()=>{
     const canvas = document.getElementById('cardCanvas');
     const filename = `zirve-${currentAlt}m.png`;
+    track('card_download', { altitude: currentAlt });
     if(navigator.share && /iPhone|iPad|iPod/i.test(navigator.userAgent)){
       canvas.toBlob(blob=>{
         const file = new File([blob], filename, {type:'image/png'});
@@ -1134,6 +1139,14 @@ function initKart(){
    pəncərəmizi açırıq — WhatsApp, Telegram, Facebook, X, link kopyala,
    şəkli endir.
    ============================================================ */
+/* Analytics ölçməsi. gtag index.html-də yüklənir; reklam bloklayıcı
+   onu kəssə də sayt işləməyə davam etməlidir — ona görə mühafizə var. */
+function track(name, params){
+  try{
+    if(typeof gtag === 'function') gtag('event', name, params || {});
+  }catch(e){ /* ölçmə heç vaxt saytı sındırmamalıdır */ }
+}
+
 function shareTexts(){
   const alt = fmtAlt(currentAlt);
   const loc = resolvedLocation.trim();
@@ -1153,6 +1166,7 @@ async function shareCard(){
      susarsa istifadəçi təkrar basır — ona görə gözləmə vəziyyəti lazımdır. */
   if(btn && btn.disabled) return;
   if(btn) btn.disabled = true;
+  track('card_share_click', { altitude: currentAlt });
 
   try{
     const { text, url, filename } = shareTexts();
@@ -1163,13 +1177,19 @@ async function shareCard(){
     if(navigator.canShare && navigator.canShare({ files: [file] })){
       try{
         await navigator.share({ files: [file], text: text + ' ' + url });
+        // Cihazın öz pəncərəsi — Instagram/TikTok-a çatan yeganə yol
+        track('share_native_done', { altitude: currentAlt });
         return;
       }catch(err){
         // İstifadəçi pəncərəni bağlayıbsa heç nə etmirik
-        if(err && (err.name === 'AbortError' || err.name === 'NotAllowedError')) return;
+        if(err && (err.name === 'AbortError' || err.name === 'NotAllowedError')){
+          track('share_native_cancel');
+          return;
+        }
         // Başqa xətada ehtiyat pəncərəsinə düşürük
       }
     }
+    track('share_sheet_open');
     openShareSheet(blob, text, url, filename);
   }finally{
     if(btn) btn.disabled = false;
@@ -1209,6 +1229,8 @@ function openShareSheet(blob, text, url, filename){
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
     a.innerHTML = `<span class="share-app-ico" style="background:${s.bg}">${s.ico}</span><span>${s.label}</span>`;
+    // Yeni tabda açılır, səhifə qalır — hadisə itmir
+    a.addEventListener('click', ()=> track('share_target', { method: s.id }));
     apps.appendChild(a);
   });
 
@@ -1220,6 +1242,8 @@ function openShareSheet(blob, text, url, filename){
     const link = document.createElement('a');
     link.href = objUrl; link.download = filename;
     document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    // Instagram/TikTok-a gedən yol — ayrıca ölçülür
+    track('share_target', { method: 'download_sheet' });
     toast(t('toast.downloaded'));
   });
   apps.appendChild(dl);
@@ -1231,8 +1255,13 @@ function openShareSheet(blob, text, url, filename){
   cp.addEventListener('click', async ()=>{
     try{
       await navigator.clipboard.writeText(text + ' ' + url);
+      track('share_target', { method: 'copy_link' });
       toast(t('toast.copied'));
-    }catch(e){ toast(t('toast.shareErr')); }
+    }catch(e){
+      // Bufer bəzi brauzerlərdə bloklanır — çoxalarsa ehtiyat yol lazımdır
+      track('share_copy_fail');
+      toast(t('toast.shareErr'));
+    }
   });
   apps.appendChild(cp);
 
