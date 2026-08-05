@@ -452,6 +452,60 @@ img{display:block;max-width:100%;height:auto}
 .card-canvas{width:100%;aspect-ratio:4/5;border-radius:12px;display:block;box-shadow:var(--shadow-lg)}
 .card-actions{display:flex;gap:10px}
 
+/* ============================================================
+   PAYLAŞIM
+   ============================================================ */
+/* Əsas paylaşım düyməsi — endirmə/lenta düymələrindən üstdə durur */
+.btn-share-native{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:10px}
+.btn-share-native svg{flex:none}
+/* Şəkil hazırlanarkən — istifadəçi təkrar basmasın deyə görünən geribildirim */
+.btn-share-native:disabled{opacity:.72;cursor:progress}
+.btn-share-native:disabled svg{animation:sharePulse .9s ease-in-out infinite}
+@keyframes sharePulse{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.4;transform:translateY(-2px)}}
+
+.share-sheet{position:fixed;inset:0;z-index:3000;display:flex;align-items:flex-end;justify-content:center}
+.share-sheet[hidden]{display:none}
+.share-backdrop{position:absolute;inset:0;background:rgba(5,9,16,0.72);backdrop-filter:blur(6px);
+  animation:shareFade .22s ease}
+.share-panel{position:relative;width:100%;max-width:440px;
+  background:var(--midnight-2);border:1px solid var(--line-2);
+  border-radius:22px 22px 0 0;
+  /* iPhone-un alt zolağı düymələri örtməsin */
+  padding:18px 18px calc(24px + env(safe-area-inset-bottom, 0px));
+  /* Alçaq ekranda panel daşmasın, öz içində sürüşsün */
+  max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  box-shadow:var(--shadow-lg);animation:shareUp .3s var(--ease)}
+@media(min-width:560px){
+  .share-sheet{align-items:center}
+  .share-panel{border-radius:22px}
+}
+@keyframes shareFade{from{opacity:0}to{opacity:1}}
+@keyframes shareUp{from{transform:translateY(24px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+.share-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.share-head h3{font-family:var(--display);font-size:20px;letter-spacing:.4px;font-weight:400}
+.share-close{width:32px;height:32px;flex:none;border:1px solid var(--line-2);border-radius:50%;
+  background:transparent;color:var(--snow);font-size:19px;line-height:1;cursor:pointer;
+  transition:border-color var(--t),background var(--t)}
+.share-close:hover{border-color:var(--snow);background:rgba(245,245,240,0.06)}
+
+.share-preview{width:104px;border-radius:10px;display:block;margin:0 auto 16px;
+  border:1px solid var(--line);background:var(--midnight)}
+
+.share-apps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:380px){.share-apps{grid-template-columns:repeat(3,1fr)}}
+
+.share-app{display:flex;flex-direction:column;align-items:center;gap:7px;
+  padding:12px 4px;border:1px solid var(--line);border-radius:14px;
+  background:var(--midnight);color:var(--snow);text-decoration:none;cursor:pointer;
+  font-family:var(--body);font-size:11px;font-weight:600;text-align:center;
+  transition:border-color var(--t),transform var(--t)}
+.share-app:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.share-app-ico{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+  font-size:16px;color:#fff;flex:none}
+
+.share-hint{margin-top:14px;font-size:11.5px;line-height:1.5;color:var(--snow-mute);text-align:center}
+
 .tab-switch{display:flex;background:var(--midnight-2);border:1px solid var(--line);border-radius:100px;padding:4px;gap:4px}
 .tab-switch-btn{flex:1;min-height:40px;border:none;border-radius:100px;background:transparent;
   color:var(--snow-mute);font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--body);letter-spacing:0.3px;

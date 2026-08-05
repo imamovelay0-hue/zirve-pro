@@ -164,6 +164,26 @@ Object.assign(I18N.en, {
   'expand.hint':'SCROLL TO EXPAND','expand.eye':'EVERY PEAK A STORY','expand.title':'See the world from above.','cta.kinetic':'↑ Move your cursor, click — the grid comes alive','apk.title':'Download for Android','apk.meta':'APK · 1 MB · free','apk.note':'Open the file → allow "Unknown sources" → Install',
 });
 
+/* Paylaşım pəncərəsi */
+Object.assign(I18N.az, {
+  'app.shareNative':'KARTI PAYLAŞ',
+  'share.title':'Kartı paylaş','share.download':'Endir','share.copy':'Linki kopyala',
+  'share.hint':'Instagram və TikTok linklə paylaşım qəbul etmir — şəkli endirib tətbiqdən yüklə.',
+  'toast.copied':'Link kopyalandı ✓','toast.shareErr':'Paylaşmaq alınmadı',
+});
+Object.assign(I18N.tr, {
+  'app.shareNative':'KARTI PAYLAŞ',
+  'share.title':'Kartı paylaş','share.download':'İndir','share.copy':'Linki kopyala',
+  'share.hint':'Instagram ve TikTok linkle paylaşımı kabul etmez — görseli indirip uygulamadan yükle.',
+  'toast.copied':'Link kopyalandı ✓','toast.shareErr':'Paylaşılamadı',
+});
+Object.assign(I18N.en, {
+  'app.shareNative':'SHARE CARD',
+  'share.title':'Share your card','share.download':'Download','share.copy':'Copy link',
+  'share.hint':'Instagram and TikTok don’t accept link sharing — download the image and upload it from the app.',
+  'toast.copied':'Link copied ✓','toast.shareErr':'Sharing failed',
+});
+
 const DAYNAMES = {
   az:['B.','B.e','Ç.a','Ç.','C.a','C.','Ş.'],
   tr:['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'],
@@ -390,6 +410,10 @@ function wxDesc(c){ return WEATHER_DESC[LANG]?.[c] ?? '—'; }
 
 let currentAlt = 0;
 let currentCoords = null;
+/* Yalnız həqiqi yer adı. #locationText elementi GPS gözlənilərkən
+   interfeys mesajı saxlayır ("İcazə verin…", "İcazə rədd edildi") —
+   o mətn kartın üstünə və paylaşım yazısına düşməməlidir. */
+let resolvedLocation = '';
 
 function setGpsStatus(state, key){
   const el = document.getElementById('gpsStatus');
@@ -517,10 +541,13 @@ async function fetchLocationName(lat, lon){
     const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=${LANG}`);
     const data = await res.json();
     const name = [data.city || data.locality, data.principalSubdivision, data.countryName].filter(Boolean).join(', ');
-    document.getElementById('locationText').textContent = name || `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+    resolvedLocation = name || `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+    document.getElementById('locationText').textContent = resolvedLocation;
   }catch(e){
-    document.getElementById('locationText').textContent = `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+    resolvedLocation = `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+    document.getElementById('locationText').textContent = resolvedLocation;
   }
+  drawCard();   // kartdakı yer adı yenilənsin
 }
 
 function renderElevProfile(alt){
@@ -618,7 +645,7 @@ function cardOpts(){
   return {
     alt: currentAlt,
     altStr: fmtAlt(currentAlt),
-    loc: (document.getElementById('locationText')?.textContent||'').slice(0,44),
+    loc: resolvedLocation.slice(0,44),
     date: new Date().toLocaleDateString(LANG==='en'?'en-US':LANG==='tr'?'tr-TR':'az-AZ'),
     img: uploadedImg || defaultSceneImg,
     cap: LANG==='tr'?'DENİZ SEVİYESİNDEN':LANG==='en'?'ABOVE SEA LEVEL':'DƏNİZ SƏVİYYƏSİNDƏN',
@@ -1066,6 +1093,8 @@ function initKart(){
     toast(t('toast.downloaded'));
   });
 
+  document.getElementById('shareCardBtn').addEventListener('click', shareCard);
+
   document.getElementById('postCardBtn').addEventListener('click', async ()=>{
     const dataUrl = document.getElementById('cardCanvas').toDataURL('image/jpeg', 0.75);
     const cards = store.get('myCards', []);
@@ -1091,6 +1120,134 @@ function initKart(){
   });
 
   drawCard();
+}
+
+/* ============================================================
+   KARTI PAYLAŞ
+   Əsas yol: navigator.share() — cihazın öz paylaşım pəncərəsini
+   açır (Instagram, TikTok, WhatsApp, Telegram, Discord…).
+   Android, iOS, Windows Chrome/Edge və macOS Safari bunu dəstəkləyir.
+   Instagram və TikTok veb paylaşım linki QƏBUL ETMİR — onlara yalnız
+   bu yerli pəncərə ilə çatmaq olar, ona görə bu üsul əsasdır.
+
+   Ehtiyat yol: dəstəklənmirsə (əsasən masaüstü Firefox) öz
+   pəncərəmizi açırıq — WhatsApp, Telegram, Facebook, X, link kopyala,
+   şəkli endir.
+   ============================================================ */
+function shareTexts(){
+  const alt = fmtAlt(currentAlt);
+  const loc = resolvedLocation.trim();
+  const where = loc && loc !== '—' ? (LANG==='en' ? ' at '+loc : ' — '+loc) : '';
+  const text = LANG==='tr' ? `${alt} metre${where}. Kendi yüksekliğini ölç:`
+             : LANG==='en' ? `${alt} meters above sea level${where}. Measure your own altitude:`
+                           : `${alt} metr${where}. Öz hündürlüyünü ölç:`;
+  return { text, url: 'https://'+SITE, filename: `zirve-${currentAlt}m.png` };
+}
+
+async function shareCard(){
+  const canvas = document.getElementById('cardCanvas');
+  if(!canvas) return;
+  const btn = document.getElementById('shareCardBtn');
+
+  /* PNG kodlaması zəif telefonda ~1 saniyə çəkir. Bu müddətdə düymə
+     susarsa istifadəçi təkrar basır — ona görə gözləmə vəziyyəti lazımdır. */
+  if(btn && btn.disabled) return;
+  if(btn) btn.disabled = true;
+
+  try{
+    const { text, url, filename } = shareTexts();
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+    if(!blob){ toast(t('toast.shareErr')); return; }
+    const file = new File([blob], filename, { type: 'image/png' });
+
+    if(navigator.canShare && navigator.canShare({ files: [file] })){
+      try{
+        await navigator.share({ files: [file], text: text + ' ' + url });
+        return;
+      }catch(err){
+        // İstifadəçi pəncərəni bağlayıbsa heç nə etmirik
+        if(err && (err.name === 'AbortError' || err.name === 'NotAllowedError')) return;
+        // Başqa xətada ehtiyat pəncərəsinə düşürük
+      }
+    }
+    openShareSheet(blob, text, url, filename);
+  }finally{
+    if(btn) btn.disabled = false;
+  }
+}
+
+const SHARE_TARGETS = [
+  { id:'whatsapp', label:'WhatsApp', bg:'#25D366', ico:'✆',
+    href:(text,url)=>`https://wa.me/?text=${encodeURIComponent(text+' '+url)}` },
+  { id:'telegram', label:'Telegram', bg:'#2AABEE', ico:'➤',
+    href:(text,url)=>`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}` },
+  { id:'facebook', label:'Facebook', bg:'#1877F2', ico:'f',
+    href:(text,url)=>`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}` },
+  { id:'x', label:'X', bg:'#000000', ico:'𝕏',
+    href:(text,url)=>`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}` },
+  { id:'pinterest', label:'Pinterest', bg:'#E60023', ico:'P',
+    href:(text,url)=>`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(url)}&description=${encodeURIComponent(text)}` },
+  { id:'reddit', label:'Reddit', bg:'#FF4500', ico:'r',
+    href:(text,url)=>`https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}` },
+];
+
+function openShareSheet(blob, text, url, filename){
+  const sheet = document.getElementById('shareSheet');
+  const apps  = document.getElementById('shareApps');
+  const prev  = document.getElementById('sharePreview');
+  if(!sheet || !apps) return;
+
+  const objUrl = URL.createObjectURL(blob);
+  prev.src = objUrl;
+
+  apps.innerHTML = '';
+
+  SHARE_TARGETS.forEach(s=>{
+    const a = document.createElement('a');
+    a.className = 'share-app';
+    a.href = s.href(text, url);
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.innerHTML = `<span class="share-app-ico" style="background:${s.bg}">${s.ico}</span><span>${s.label}</span>`;
+    apps.appendChild(a);
+  });
+
+  // Şəkli endir — Instagram/TikTok üçün yeganə yol
+  const dl = document.createElement('button');
+  dl.className = 'share-app';
+  dl.innerHTML = `<span class="share-app-ico" style="background:var(--midnight-3);border:1px solid var(--line-2)">⭳</span><span>${t('share.download')}</span>`;
+  dl.addEventListener('click', ()=>{
+    const link = document.createElement('a');
+    link.href = objUrl; link.download = filename;
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    toast(t('toast.downloaded'));
+  });
+  apps.appendChild(dl);
+
+  // Linki kopyala
+  const cp = document.createElement('button');
+  cp.className = 'share-app';
+  cp.innerHTML = `<span class="share-app-ico" style="background:var(--midnight-3);border:1px solid var(--line-2)">⧉</span><span>${t('share.copy')}</span>`;
+  cp.addEventListener('click', async ()=>{
+    try{
+      await navigator.clipboard.writeText(text + ' ' + url);
+      toast(t('toast.copied'));
+    }catch(e){ toast(t('toast.shareErr')); }
+  });
+  apps.appendChild(cp);
+
+  const close = ()=>{
+    sheet.hidden = true;
+    URL.revokeObjectURL(objUrl);
+    document.removeEventListener('keydown', onKey);
+  };
+  const onKey = e => { if(e.key === 'Escape') close(); };
+
+  document.getElementById('shareClose').onclick = close;
+  document.getElementById('shareBackdrop').onclick = close;
+  document.addEventListener('keydown', onKey);
+
+  sheet.hidden = false;
 }
 
 /* ============================================================

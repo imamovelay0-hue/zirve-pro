@@ -334,9 +334,21 @@ gtag('config', 'G-96WMZ8VRZM');
               <canvas id="cardCanvas" width="600" height="750" class="card-canvas"></canvas>
             </div>
 
+            <!-- Əsas paylaşım düyməsi: cihazın öz paylaşım pəncərəsini açır
+                 (Instagram, TikTok, WhatsApp və s.). Ən görünən düymə olmalıdır,
+                 çünki paylaşılan kart tətbiqin yeganə viral kanalıdır. -->
+            <button class="btn-primary btn-share-native" id="shareCardBtn">
+              <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"></path>
+                <polyline points="16 6 12 2 8 6"></polyline>
+                <line x1="12" y1="2" x2="12" y2="15"></line>
+              </svg>
+              <span data-i18n="app.shareNative">KARTI PAYLAŞ</span>
+            </button>
+
             <div class="card-actions">
               <button class="btn-secondary" id="downloadCardBtn" data-i18n="app.download">PNG KİMİ ENDİR</button>
-              <button class="btn-primary" id="postCardBtn" data-i18n="app.share">SOSİALDA PAYLAŞ</button>
+              <button class="btn-secondary" id="postCardBtn" data-i18n="app.share">SOSİALDA PAYLAŞ</button>
             </div>
           </section>
 
@@ -454,6 +466,25 @@ gtag('config', 'G-96WMZ8VRZM');
 </main>
 
 <div class="toast" id="toast"></div>
+
+<!-- ============================================================
+     PAYLAŞIM — ehtiyat pəncərəsi
+     Yalnız brauzer navigator.share dəstəkləmədikdə açılır
+     (əsasən masaüstü Firefox). Mobil və Windows Chrome/Edge-də
+     cihazın öz paylaşım pəncərəsi açıldığı üçün bu görünmür.
+     ============================================================ -->
+<div class="share-sheet" id="shareSheet" hidden>
+  <div class="share-backdrop" id="shareBackdrop"></div>
+  <div class="share-panel" role="dialog" aria-modal="true" aria-labelledby="shareSheetTitle">
+    <div class="share-head">
+      <h3 id="shareSheetTitle" data-i18n="share.title">Kartı paylaş</h3>
+      <button class="share-close" id="shareClose" aria-label="Bağla">×</button>
+    </div>
+    <img class="share-preview" id="sharePreview" alt="">
+    <div class="share-apps" id="shareApps"></div>
+    <p class="share-hint" data-i18n="share.hint">Instagram və TikTok linklə paylaşım qəbul etmir — şəkli endirib tətbiqdən yüklə.</p>
+  </div>
+</div>
 
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
