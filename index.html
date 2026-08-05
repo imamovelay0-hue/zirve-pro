@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="az">
+<!-- Statik dil ingiliscədir: Google saytı qlobal auditoriya üçün indeksləsin.
+     Tətbiqin özü navigator.language / IP-yə görə AZ / TR / EN-ə keçir. -->
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -10,23 +12,47 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-96WMZ8VRZM');
 </script>
-<title>Zirvə — Hündürlüyünü ölç. Paylaş. Fəth et.</title>
-<meta name="description" content="Zirvə — dağçılar üçün premium GPS hündürlük ölçmə və sosial platforma. Öz zirvələrini kəşf et, kartlar yarat, liderlik tablosunda irəlilə.">
+<title>What Is My Altitude? Free GPS Elevation Finder — Zirvə</title>
+<meta name="description" content="Find your exact altitude above sea level instantly with GPS. Free, no app download, no sign-up. Get your elevation in meters and create a shareable summit card.">
+<link rel="canonical" href="https://zirve-pro.netlify.app/">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏔️</text></svg>">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a1628">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ZİRVƏ">
-<!-- Open Graph / WhatsApp / Telegram preview -->
+<!-- Open Graph / WhatsApp / Telegram preview.
+     Şəkil PNG olmalıdır — Facebook, WhatsApp və Twitter SVG-ni göstərmir. -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="ZİRVƏ — Hündürlüyünü ölç. Paylaş. Fəth et.">
-<meta property="og:description" content="Dağçılar üçün premium GPS hündürlük platforması. Zirvələrini kəşf et, kartlar yarat, liderlik tablosunda irəlilə.">
-<meta property="og:image" content="https://zirve-pro.netlify.app/og-image.svg">
+<meta property="og:site_name" content="Zirvə">
+<meta property="og:title" content="What Is My Altitude? Free GPS Elevation Finder">
+<meta property="og:description" content="Find your exact altitude above sea level instantly. Free, no download, no sign-up — and get a shareable summit card.">
+<meta property="og:image" content="https://zirve-pro.netlify.app/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:url" content="https://zirve-pro.netlify.app">
+<meta property="og:url" content="https://zirve-pro.netlify.app/">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="What Is My Altitude? Free GPS Elevation Finder">
+<meta name="twitter:description" content="Find your exact altitude above sea level instantly. Free, no download, no sign-up.">
+<meta name="twitter:image" content="https://zirve-pro.netlify.app/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Zirvə",
+  "url": "https://zirve-pro.netlify.app/",
+  "applicationCategory": "TravelApplication",
+  "operatingSystem": "Any (web browser)",
+  "description": "Free GPS altitude finder. Measure your elevation above sea level instantly in your browser and generate a shareable summit card.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "featureList": [
+    "Instant GPS altitude reading",
+    "Elevation above sea level in meters",
+    "Shareable summit cards",
+    "No sign-up or app download required"
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://api.open-meteo.com">
@@ -413,7 +439,9 @@ gtag('config', 'G-96WMZ8VRZM');
       </div>
       <div class="foot-cols">
         <div><div class="foot-h" data-i18n="foot.product">MƏHSUL</div><a href="#features" data-i18n="nav.features">Xüsusiyyətlər</a><a href="#app" data-i18n="nav.app">App</a></div>
-        <div><div class="foot-h" data-i18n="foot.info">İNFO</div><a href="#manifest" data-i18n="nav.manifest">Manifest</a><a href="#" data-i18n="foot.privacy">Məxfilik</a></div>
+        <div><div class="foot-h" data-i18n="foot.info">İNFO</div><a href="#manifest" data-i18n="nav.manifest">Manifest</a><a href="privacy.html" data-i18n="foot.privacy">Məxfilik</a></div>
+        <!-- Bu keçidlər Google-un giriş səhifələrini tapması üçün lazımdır -->
+        <div><div class="foot-h">GUIDES</div><a href="what-is-my-altitude.html">What is my altitude?</a><a href="elevation-above-sea-level.html">Elevation above sea level</a><a href="gps-altitude-accuracy.html">GPS altitude accuracy</a></div>
         <div><div class="foot-h" data-i18n="foot.contact">ƏLAQƏ</div><a href="#" data-i18n="foot.instagram">Instagram</a><a href="#" data-i18n="foot.email">salam@zirve.az</a></div>
       </div>
     </div>

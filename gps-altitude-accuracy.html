@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Accurate Is GPS Altitude? What to Expect and How to Improve It</title>
+<meta name="description" content="GPS altitude is usually accurate to 10-20 metres. Here is why vertical accuracy is worse than horizontal, what affects it, and how to get a better reading on the trail.">
+<link rel="canonical" href="https://zirve-pro.netlify.app/gps-altitude-accuracy.html">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏔️</text></svg>">
+<meta name="theme-color" content="#0B1220">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Zirvə">
+<meta property="og:title" content="How Accurate Is GPS Altitude?">
+<meta property="og:description" content="Why vertical GPS accuracy is worse than horizontal, and how to get a better altitude reading.">
+<meta property="og:image" content="https://zirve-pro.netlify.app/og-image.png">
+<meta property="og:url" content="https://zirve-pro.netlify.app/gps-altitude-accuracy.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="seo.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How accurate is GPS altitude?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Under open sky, GPS altitude is typically accurate to within 10 to 20 metres. Vertical accuracy is roughly two to three times worse than horizontal accuracy because satellites are only visible above the horizon, never below it, which weakens the geometry in the vertical direction."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is GPS altitude less accurate than GPS position?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A receiver surrounded by satellites on all horizontal sides can triangulate position precisely. Vertically it only ever sees satellites above it, so errors in the vertical direction cannot be cancelled out as effectively. This effect is known as vertical dilution of precision."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is a barometric altimeter more accurate than GPS?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A barometric altimeter can be more precise over short periods, often within a few metres, but it drifts as air pressure changes with the weather and must be recalibrated at a known elevation. GPS does not drift. The most accurate devices combine both."
+      }
+    }
+  ]
+}
+</script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="/"><span>△</span><span>ZİRVƏ</span></a>
+    <a class="nav-cta" href="/#app">Check my altitude</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Field guide</p>
+    <h1>How accurate is GPS altitude?</h1>
+    <p class="lede">Short version: expect 10–20 metres under open sky, and worse under trees or between buildings. The interesting part is <em>why</em> — and what you can do about it in the field.</p>
+    <div class="cta-row">
+      <a class="btn" href="/#app">Check my altitude →</a>
+      <span class="btn-note">Free · No sign-up · No download</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <h2>Why vertical accuracy is worse</h2>
+  <p>Your receiver works out where it is by measuring its distance from several satellites at once. How well that works depends heavily on where those satellites sit in the sky.</p>
+  <p>Horizontally you are in a good position: satellites appear all around you — north, south, east, west — so errors pull in opposing directions and largely cancel out.</p>
+  <p>Vertically you are not. Every satellite you can see is <em>above</em> you. None can ever be below, because the planet is in the way. All the measurements push from the same general direction, so vertical errors reinforce rather than cancel. Engineers call this <strong>vertical dilution of precision</strong>, and it is the single reason your altitude figure is shakier than your position on the map.</p>
+
+  <div class="callout">
+    <p><strong>Rule of thumb:</strong> whatever horizontal accuracy your device reports, expect vertical error to be roughly two to three times larger.</p>
+  </div>
+
+  <h2>What makes it worse</h2>
+  <table>
+    <thead>
+      <tr><th>Condition</th><th>Effect on altitude</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Open ridge or summit</td><td>Best case — 5 to 15 m</td></tr>
+      <tr><td>Open flat ground</td><td>10 to 20 m</td></tr>
+      <tr><td>Dense forest canopy</td><td>20 to 40 m — leaves and wet wood absorb signal</td></tr>
+      <tr><td>Narrow valley or gorge</td><td>25 to 50 m — walls hide half the sky</td></tr>
+      <tr><td>City streets between towers</td><td>30 to 100 m — signals bounce before reaching you</td></tr>
+      <tr><td>Inside a building or vehicle</td><td>Unreliable</td></tr>
+      <tr><td>First 10 seconds after switching on</td><td>Poor until the receiver locks on</td></tr>
+      <tr><td>Heavy rain or wet snow</td><td>Slightly degraded</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Five things that genuinely help</h2>
+  <ol>
+    <li><strong>Go outside and stay in the open.</strong> Nothing else on this list comes close in impact.</li>
+    <li><strong>Wait 30 to 60 seconds.</strong> Receivers improve substantially as they lock onto more satellites and average successive fixes.</li>
+    <li><strong>Stand still.</strong> Moving forces the receiver to keep re-solving instead of refining one position.</li>
+    <li><strong>Keep clear of walls, cliffs and vehicles.</strong> Reflected signals travel further than direct ones and quietly corrupt the solution.</li>
+    <li><strong>Take the reading at the top.</strong> On a summit you have the most open sky you will get all day.</li>
+  </ol>
+
+  <h2>GPS versus barometric altimeters</h2>
+  <p>Many sports watches include a barometric altimeter, which infers height from air pressure. The two approaches fail in opposite ways.</p>
+  <table>
+    <thead>
+      <tr><th></th><th>GPS</th><th>Barometric</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Typical error</td><td>10–20 m</td><td>3–10 m when freshly calibrated</td></tr>
+      <tr><td>Drifts over time</td><td>No</td><td>Yes — weather moves the pressure</td></tr>
+      <tr><td>Needs calibration</td><td>No</td><td>Yes, at a known elevation</td></tr>
+      <tr><td>Works indoors</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Affected by tree cover</td><td>Yes</td><td>No</td></tr>
+      <tr><td>Affected by a storm front</td><td>No</td><td>Yes — can shift readings tens of metres</td></tr>
+    </tbody>
+  </table>
+  <p>This is why dedicated hiking watches fuse the two: the barometer supplies fine short-term detail, and GPS keeps it honest over the course of a day.</p>
+
+  <h2>Why your reading disagrees with the summit sign</h2>
+  <p>You stand on a marked 2,847 m peak and your phone says 2,861 m. Nothing is broken. Three ordinary reasons:</p>
+  <ul>
+    <li><strong>Normal GPS error.</strong> A 14 m difference sits comfortably inside the expected range.</li>
+    <li><strong>Different reference surfaces.</strong> Official heights are surveyed against a specific geoid model; your receiver may apply a slightly different correction.</li>
+    <li><strong>You are not exactly on the marker.</strong> Standing three metres away on a rocky summit is genuinely a different elevation.</li>
+  </ul>
+
+  <h2>When 20 metres does not matter — and when it does</h2>
+  <p>For hiking, cycling, trail running and logging the peaks you have climbed, a 10–20 m uncertainty is irrelevant. Your summit is your summit.</p>
+  <p>It matters for aviation, surveying, and construction — all of which use survey-grade equipment with correction services, not a phone.</p>
+
+  <h2>Record it while you are up there</h2>
+  <p>Zirvə reads your GPS altitude and turns it into a summit card with your elevation, coordinates, location and date — free, instant, and no account required.</p>
+
+  <h2 style="margin-bottom:6px">Common questions</h2>
+  <div class="faq">
+    <details open>
+      <summary>Does an expensive phone give better altitude accuracy?</summary>
+      <p>Slightly. Newer phones support dual-frequency GNSS, which reduces atmospheric error meaningfully. But standing in the open matters far more than which phone is in your hand.</p>
+    </details>
+    <details>
+      <summary>Does GPS work without a mobile signal?</summary>
+      <p>Yes. GPS is receive-only from satellites and needs no mobile network. A data connection only speeds up the initial lock.</p>
+    </details>
+    <details>
+      <summary>Why does my altitude change while I stand still?</summary>
+      <p>The receiver keeps recalculating as satellites move and signal quality shifts. A drift of a few metres while stationary is completely normal.</p>
+    </details>
+    <details>
+      <summary>Can I improve accuracy by taking several readings?</summary>
+      <p>Yes. Taking a few readings a minute apart and using the middle value removes most of the random noise.</p>
+    </details>
+  </div>
+
+  <section class="final">
+    <h2>Try it on your next climb</h2>
+    <p>Free GPS altitude reading, plus a summit card worth keeping.</p>
+    <div class="cta-row">
+      <a class="btn" href="/#app">Check my altitude →</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>△ ZİRVƏ — free GPS altitude finder</span>
+    <span class="foot-links">
+      <a href="/">Home</a>
+      <a href="/what-is-my-altitude.html">What is my altitude</a>
+      <a href="/elevation-above-sea-level.html">Elevation above sea level</a>
+      <a href="/privacy.html">Privacy</a>
+    </span>
+  </div>
+</footer>
+
+</body>
+</html>

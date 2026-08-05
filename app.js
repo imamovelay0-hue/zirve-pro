@@ -188,9 +188,11 @@ function applyLang(){
   document.querySelectorAll('.lang-switch button').forEach(b=> b.classList.toggle('active', b.dataset.lang === LANG));
 
   // dynamic labels
-  document.title = LANG === 'tr' ? 'Zirvə — Yüksekliğini ölç. Paylaş. Fethet.' :
-                   LANG === 'en' ? 'Zirvə — Measure. Share. Conquer.' :
-                                    'Zirvə — Hündürlüyünü ölç. Paylaş. Fəth et.';
+  /* EN başlığı SEO başlığı ilə eyni olmalıdır — Googlebot səhifəni
+     render edir və burada yazılan başlıq statik <title>-ı əvəz edir. */
+  document.title = LANG === 'tr' ? 'Rakımım Nedir? Ücretsiz GPS Yükseklik Ölçer — Zirvə' :
+                   LANG === 'en' ? 'What Is My Altitude? Free GPS Elevation Finder — Zirvə' :
+                                    'Hündürlüyüm nə qədərdir? Pulsuz GPS ölçmə — Zirvə';
 }
 
 async function detectLang(){
@@ -597,6 +599,21 @@ function drawCover(ctx,img,x,y,w,h){
 }
 function fmtAlt(n){ return n.toLocaleString(LANG==='en'?'en-US':LANG==='tr'?'tr-TR':'az-AZ'); }
 
+/* Paylaşılan kartın üstündəki ünvan — kartı görən adamın gedəcəyi yer */
+const SITE = 'zirve-pro.netlify.app';
+
+/* Hündürlük 4 rəqəmli olanda nəhəng rəqəm sahəyə sığmır və
+   yan yazıların üstünə çıxır. Bu, şrifti sığana qədər kiçildir. */
+function fitFontSize(ctx, text, family, weight, basePx, maxWidth){
+  let px = basePx;
+  ctx.font = weight+' '+px+'px '+family;
+  while(px > 28 && ctx.measureText(text).width > maxWidth){
+    px -= 4;
+    ctx.font = weight+' '+px+'px '+family;
+  }
+  return px;
+}
+
 function cardOpts(){
   return {
     alt: currentAlt,
@@ -618,9 +635,11 @@ function layoutFoto(ctx,W,H,O){
     g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,0.55)');
     ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
     ctx.textAlign='left'; ctx.fillStyle='rgba(245,245,240,0.9)'; ctx.font='400 15px "JetBrains Mono", monospace';
-    ctx.fillText('△ ZİRVƏ', 26, H-36);
+    ctx.fillText('△ ZİRVƏ', 26, H-50);
+    ctx.fillStyle='rgba(245,245,240,0.72)'; ctx.font='400 12px "JetBrains Mono", monospace';
+    ctx.fillText(SITE, 26, H-30);
     ctx.textAlign='right'; ctx.fillStyle='rgba(245,245,240,0.75)'; ctx.font='400 15px "JetBrains Mono", monospace';
-    ctx.fillText(O.altStr+' '+O.meter, W-26, H-36);
+    ctx.fillText(O.altStr+' '+O.meter, W-26, H-40);
   } else {
     const g=ctx.createLinearGradient(0,0,W,H); g.addColorStop(0,'#131d2e'); g.addColorStop(1,'#0B1220');
     ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
@@ -635,7 +654,9 @@ function layoutFoto(ctx,W,H,O){
     ctx.fillStyle='rgba(245,245,240,0.4)'; ctx.font='400 17px Hanken Grotesk, sans-serif';
     ctx.fillText(LANG==='tr'?'Fotoğraf yükle':LANG==='en'?'Upload a photo':'Şəkil yüklə', cx, cy+106);
     ctx.fillStyle='rgba(245,245,240,0.2)'; ctx.font='400 14px "JetBrains Mono", monospace';
-    ctx.fillText('△ ZİRVƏ', cx, H-48);
+    ctx.fillText('△ ZİRVƏ', cx, H-52);
+    ctx.font='400 12px "JetBrains Mono", monospace';
+    ctx.fillText(SITE, cx, H-30);
   }
 }
 
@@ -670,14 +691,17 @@ function layoutPoster(ctx,W,H,O){
   ctx.fillText(O.date, W-68, 90);
   ctx.textAlign='center';
   ctx.font='400 14px "JetBrains Mono", monospace'; ctx.fillStyle='rgba(245,245,240,0.7)';
-  ctx.fillText(O.cap, W/2, H*0.5);
-  ctx.fillStyle='#F5F5F0'; ctx.font='400 240px Anton, sans-serif';
+  ctx.fillText(O.cap, W/2, H*0.42);
+  ctx.fillStyle='#F5F5F0';
+  ctx.font='400 '+fitFontSize(ctx,O.altStr,'Anton, sans-serif','400',240,W-110)+'px Anton, sans-serif';
   ctx.shadowColor='rgba(0,0,0,0.55)'; ctx.shadowBlur=40; ctx.shadowOffsetY=6;
   ctx.fillText(O.altStr, W/2, H*0.72); ctx.shadowBlur=0; ctx.shadowOffsetY=0;
   ctx.font='700 30px Hanken Grotesk, sans-serif'; ctx.fillStyle='#FFD166';
   ctx.fillText(O.meter, W/2, H*0.72+50);
   ctx.font='400 18px Hanken Grotesk, sans-serif'; ctx.fillStyle='rgba(245,245,240,0.95)';
-  ctx.fillText(O.loc, W/2, H-74);
+  ctx.fillText(O.loc, W/2, H-78);
+  ctx.font='400 13px "JetBrains Mono", monospace'; ctx.fillStyle='rgba(245,245,240,0.68)';
+  ctx.fillText(SITE, W/2, H-52);
 }
 
 /* -------- 2) PASS (boarding pass) — cream + emerald accents -------- */
@@ -733,10 +757,12 @@ function layoutPass(ctx,W,H,O){
   ctx.fillStyle='#0A3B2E'; ctx.font='400 15px Hanken Grotesk, sans-serif';
   ctx.fillText(O.loc, ix, row+72);
   // barcode
-  let bx=ix, by=cy+ch-52; const bw=cw-68;
+  let bx=ix, by=cy+ch-66; const bw=cw-68;
   let seed=(currentAlt||1)*7+13;
   ctx.fillStyle='#0A3B2E';
-  while(bx<ix+bw){ seed=(seed*1103515245+12345)&0x7fffffff; const w=1+(seed>>8)%5; if((seed>>4)&1) ctx.fillRect(bx,by,w,32); bx+=w+2; }
+  while(bx<ix+bw){ seed=(seed*1103515245+12345)&0x7fffffff; const w=1+(seed>>8)%5; if((seed>>4)&1) ctx.fillRect(bx,by,w,28); bx+=w+2; }
+  ctx.textAlign='center'; ctx.fillStyle='rgba(10,59,46,0.6)'; ctx.font='400 12px "JetBrains Mono", monospace';
+  ctx.fillText(SITE, W/2, cy+ch-14);
 }
 
 /* -------- 3) MINIMAL — soft peach card -------- */
@@ -765,14 +791,18 @@ function layoutMinimal(ctx,W,H,O){
   ctx.textAlign='left';
   ctx.fillStyle='#8B4513'; ctx.font='400 12px "JetBrains Mono", monospace';
   ctx.fillText('△ ZİRVƏ  ·  '+O.date, 56, ty-42);
+  ctx.textAlign='right'; ctx.fillStyle='#E63946'; ctx.font='400 12px "JetBrains Mono", monospace';
+  ctx.fillText(SITE, W-56, ty-42);
+  ctx.textAlign='left';
   ctx.fillStyle='#E63946'; ctx.beginPath(); ctx.arc(62, ty-10, 5, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle='#8B4513'; ctx.font='400 12px "JetBrains Mono", monospace';
   ctx.fillText(O.cap, 76, ty-6);
-  ctx.fillStyle='#1D1D1B'; ctx.font='400 148px Anton, sans-serif';
-  ctx.fillText(O.altStr, 52, ty+100);
+  ctx.fillStyle='#1D1D1B';
+  ctx.font='400 '+fitFontSize(ctx,O.altStr,'Anton, sans-serif','400',148,W-190)+'px Anton, sans-serif';
+  ctx.fillText(O.altStr, 52, ty+124);
   const numW=ctx.measureText(O.altStr).width;
   ctx.font='700 22px Hanken Grotesk, sans-serif'; ctx.fillStyle='#E63946';
-  ctx.fillText(O.meter, 60+numW, ty+100);
+  ctx.fillText(O.meter, 60+numW, ty+124);
   ctx.strokeStyle='rgba(139,69,19,0.25)'; ctx.lineWidth=1;
   ctx.beginPath(); ctx.moveTo(56,H-70); ctx.lineTo(W-56,H-70); ctx.stroke();
   ctx.fillStyle='#1D1D1B'; ctx.font='600 15px Hanken Grotesk, sans-serif';
@@ -807,7 +837,7 @@ function layoutMagazine(ctx,W,H,O){
   ctx.fillText('ZİRVƏ', 40, 132);
   // subtitle
   ctx.fillStyle='rgba(245,245,240,0.7)'; ctx.font='400 13px "JetBrains Mono", monospace';
-  ctx.fillText('EXPEDITION ISSUE  ·  MOUNTAIN JOURNAL', 44, 158);
+  ctx.fillText('EXPEDITION ISSUE  ·  '+SITE.toUpperCase(), 44, 158);
   // coverlines with red bullets
   ctx.fillStyle='#FBBF24'; ctx.beginPath(); ctx.arc(52, H*0.5-6, 5, 0, Math.PI*2); ctx.fill();
   ctx.fillStyle='rgba(245,245,240,0.95)'; ctx.font='600 19px Hanken Grotesk, sans-serif';
@@ -817,15 +847,16 @@ function layoutMagazine(ctx,W,H,O){
   ctx.fillText(LANG==='tr'?'GPS ile yükseklik':LANG==='en'?'Altitude by GPS':'GPS ilə hündürlük', 68, H*0.5+34);
   // bottom big number block
   ctx.fillStyle='#FBBF24'; ctx.font='700 15px "JetBrains Mono", monospace';
-  ctx.fillText(O.cap, 44, H-196);
-  ctx.fillStyle='#F5F5F0'; ctx.font='400 184px Anton, sans-serif';
+  ctx.fillText(O.cap, 44, H-248);
+  ctx.fillStyle='rgba(245,245,240,0.85)'; ctx.font='400 15px Hanken Grotesk, sans-serif';
+  ctx.fillText(O.loc, 44, H-220);
+  ctx.fillStyle='#F5F5F0';
+  ctx.font='400 '+fitFontSize(ctx,O.altStr,'Anton, sans-serif','400',184,W-190)+'px Anton, sans-serif';
   ctx.shadowColor='rgba(0,0,0,0.6)'; ctx.shadowBlur=20;
   ctx.fillText(O.altStr, 40, H-52); ctx.shadowBlur=0;
   const numW=ctx.measureText(O.altStr).width;
   ctx.fillStyle='#FBBF24'; ctx.font='700 26px Hanken Grotesk, sans-serif';
   ctx.fillText(O.meter, 52+numW, H-52);
-  ctx.fillStyle='rgba(245,245,240,0.85)'; ctx.font='400 15px Hanken Grotesk, sans-serif';
-  ctx.fillText(O.loc, 52+numW, H-80);
 }
 
 /* -------- 5) TOPO — neon cyan grid on deep purple -------- */
@@ -861,6 +892,8 @@ function layoutTopo(ctx,W,H,O){
   // header
   ctx.textAlign='left'; ctx.fillStyle='#00F5FF'; ctx.font='400 22px "JetBrains Mono", monospace';
   ctx.fillText('△ ZİRVƏ', 44, 70);
+  ctx.fillStyle='rgba(0,245,255,0.62)'; ctx.font='400 12px "JetBrains Mono", monospace';
+  ctx.fillText(SITE, 46, 92);
   ctx.textAlign='right'; ctx.fillStyle='#FF006E'; ctx.font='400 14px "JetBrains Mono", monospace';
   ctx.fillText('◉ '+O.coord, W-44, 70);
   // corner ticks
@@ -873,11 +906,12 @@ function layoutTopo(ctx,W,H,O){
   // center readout
   ctx.textAlign='center'; ctx.fillStyle='rgba(0,245,255,0.75)'; ctx.font='400 14px "JetBrains Mono", monospace';
   ctx.fillText(O.cap, W/2, H*0.44-98);
-  ctx.fillStyle='#F5F5F0'; ctx.font='400 160px Anton, sans-serif';
+  ctx.fillStyle='#F5F5F0';
+  ctx.font='400 '+fitFontSize(ctx,O.altStr,'Anton, sans-serif','400',160,W-120)+'px Anton, sans-serif';
   ctx.shadowColor='rgba(0,245,255,0.7)'; ctx.shadowBlur=28;
   ctx.fillText(O.altStr, W/2, H*0.44+52); ctx.shadowBlur=0;
   ctx.fillStyle='#FF006E'; ctx.font='700 24px Hanken Grotesk, sans-serif';
-  ctx.fillText(O.meter, W/2, H*0.44+88);
+  ctx.fillText(O.meter, W/2, H*0.44+112);
   ctx.fillStyle='#F5F5F0'; ctx.font='400 17px Hanken Grotesk, sans-serif';
   ctx.fillText(O.loc, W/2, H-58);
 }
@@ -934,16 +968,19 @@ function layoutRetro(ctx,W,H,O){
   // decorative dashes on ribbon
   ctx.strokeStyle='rgba(255,211,165,0.4)'; ctx.lineWidth=2;
   ctx.beginPath(); ctx.moveTo(30,72); ctx.lineTo(80,72); ctx.moveTo(W-80,72); ctx.lineTo(W-30,72); ctx.stroke();
+  ctx.textAlign='center'; ctx.fillStyle='#5A2A18'; ctx.font='400 13px "JetBrains Mono", monospace';
+  ctx.fillText(SITE, W/2, 126);
   // number badge with double outline
   ctx.textAlign='center';
-  ctx.font='400 136px Anton, sans-serif';
+  ctx.font='400 '+fitFontSize(ctx,O.altStr,'Anton, sans-serif','400',136,W-120)+'px Anton, sans-serif';
   ctx.strokeStyle='#2F1810'; ctx.lineWidth=10; ctx.lineJoin='round';
-  ctx.strokeText(O.altStr, W/2, H-110);
-  ctx.fillStyle='#FFD3A5'; ctx.fillText(O.altStr, W/2, H-110);
-  ctx.fillStyle='#2F1810'; ctx.font='700 22px Hanken Grotesk, sans-serif';
-  ctx.fillText(O.meter+' · '+O.cap, W/2, H-70);
-  ctx.font='400 16px Hanken Grotesk, sans-serif'; ctx.fillStyle='#3a2214';
-  ctx.fillText('« '+O.loc+' »', W/2, H-42);
+  ctx.strokeText(O.altStr, W/2, H-128);
+  ctx.fillStyle='#FFD3A5'; ctx.fillText(O.altStr, W/2, H-128);
+  /* Aşağıdakı zolaq tünd qəhvəyidir — yazılar açıq rəngdə olmalıdır, yoxsa görünmür */
+  ctx.fillStyle='#FFD3A5'; ctx.font='700 20px Hanken Grotesk, sans-serif';
+  ctx.fillText(O.meter+' · '+O.cap, W/2, H-78);
+  ctx.font='400 15px Hanken Grotesk, sans-serif'; ctx.fillStyle='rgba(255,211,165,0.82)';
+  ctx.fillText('« '+O.loc+' »', W/2, H-46);
 }
 
 const LAYOUTS = [
