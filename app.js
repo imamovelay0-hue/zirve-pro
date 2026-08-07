@@ -77,6 +77,7 @@ const I18N = {
     'manifest.sub':'Hər zirvə — bir hekayə. Hər hündürlük — bir dəlil.<br>Zirvə səni izləyir. Sən Zirvə-ni bəslə.',
     'cta.eye':'İNDİ SIRA SƏNİNDİR','cta.title':'Öz Zirvəni qeydə al ↓','cta.sub':'Aşağıdakı app-də bir kliklə başla — GPS ilə hündürlüyünü tap, kart yarat, paylaş.',
     'app.gpsSearching':'GPS axtarılır','app.gpsLive':'GPS aktiv','app.gpsError':'İcazə verilmədi',
+    'app.gpsOffline':'Oflayn — təxmini','toast.offlineAlt':'İnternet yoxdur — hündürlük GPS peykindən alındı, təxminidir.','toast.offlineNoAlt':'İnternet yoxdur və GPS bu cihazda hündürlük vermir.',
     'app.currentAlt':'HAZIRKI HÜNDÜRLÜK','app.grantLoc':'Yerinizi tapmaq üçün icazə verin','app.locate':'HÜNDÜRLÜYÜMÜ TAP',
     'app.temp':'HAVA','app.wind':'KÜLƏK','app.humidity':'RÜTUBƏT','app.feels':'HİSS OLUNAN','app.loading':'Yüklənir…','app.relative':'nisbi',
     'app.forecast':'5 GÜNLÜK PROQNOZ','app.compare':'MƏŞHUR ZİRVƏLƏRLƏ MÜQAYİSƏ','app.altSick':'Bu hündürlükdə hava təzyiqi azalır — yüksəklik xəstəliyi riskinə diqqət edin.',
@@ -105,6 +106,7 @@ const I18N = {
     'manifest.sub':'Her zirve — bir hikaye. Her yükseklik — bir kanıt.<br>Zirvə seni izliyor. Sen Zirvə\'yi besle.',
     'cta.eye':'ŞİMDİ SIRA SENDE','cta.title':'Kendi Zirvenzi kaydet ↓','cta.sub':'Aşağıdaki uygulamada tek tıkla başla — GPS ile yüksekliğini bul, kart oluştur, paylaş.',
     'app.gpsSearching':'GPS aranıyor','app.gpsLive':'GPS aktif','app.gpsError':'İzin verilmedi',
+    'app.gpsOffline':'Çevrimdışı — yaklaşık','toast.offlineAlt':'İnternet yok — yükseklik GPS uydusundan alındı, yaklaşıktır.','toast.offlineNoAlt':'İnternet yok ve GPS bu cihazda yükseklik vermiyor.',
     'app.currentAlt':'ŞU ANKİ YÜKSEKLİK','app.grantLoc':'Konumunu bulmak için izin ver','app.locate':'YÜKSEKLİĞİMİ BUL',
     'app.temp':'HAVA','app.wind':'RÜZGAR','app.humidity':'NEM','app.feels':'HİSSEDİLEN','app.loading':'Yükleniyor…','app.relative':'bağıl',
     'app.forecast':'5 GÜNLÜK TAHMİN','app.compare':'ÜNLÜ ZİRVELERLE KIYASLA','app.altSick':'Bu yükseklikte hava basıncı düşer — yüksek irtifa hastalığı riskine dikkat.',
@@ -133,6 +135,7 @@ const I18N = {
     'manifest.sub':'Every peak — a story. Every altitude — a proof.<br>Zirvə watches you. You feed Zirvə.',
     'cta.eye':'NOW IT\'S YOUR TURN','cta.title':'Log Your Own Peak ↓','cta.sub':'One click in the app below — find your altitude with GPS, create a card, share it.',
     'app.gpsSearching':'Searching GPS','app.gpsLive':'GPS active','app.gpsError':'Permission denied',
+    'app.gpsOffline':'Offline — approximate','toast.offlineAlt':'No internet — altitude read from the GPS satellite, so it is approximate.','toast.offlineNoAlt':'No internet, and this device does not report GPS altitude.',
     'app.currentAlt':'CURRENT ALTITUDE','app.grantLoc':'Grant location access to find your spot','app.locate':'FIND MY ALTITUDE',
     'app.temp':'WEATHER','app.wind':'WIND','app.humidity':'HUMIDITY','app.feels':'FEELS LIKE','app.loading':'Loading…','app.relative':'relative',
     'app.forecast':'5-DAY FORECAST','app.compare':'COMPARE WITH FAMOUS PEAKS','app.altSick':'Air pressure drops at this altitude — watch out for altitude sickness.',
@@ -410,6 +413,10 @@ function wxDesc(c){ return WEATHER_DESC[LANG]?.[c] ?? '—'; }
 
 let currentAlt = 0;
 let currentCoords = null;
+/* GPS peykinin verdiyi hündürlük. İnternet olmayanda ehtiyat mənbədir.
+   Bəzi cihazlar (əksər masaüstü) null qaytarır — ona görə yoxlanılır. */
+let gpsAltitude = null;
+let altIsApprox = false;
 /* Yalnız həqiqi yer adı. #locationText elementi GPS gözlənilərkən
    interfeys mesajı saxlayır ("İcazə verin…", "İcazə rədd edildi") —
    o mətn kartın üstünə və paylaşım yazısına düşməməlidir. */
@@ -449,16 +456,20 @@ async function locate(){
   const scrambleIv = setHeroDigitsScrambling();
 
   navigator.geolocation.getCurrentPosition(async (pos)=>{
-    const {latitude, longitude} = pos.coords;
+    const {latitude, longitude, altitude} = pos.coords;
     currentCoords = {latitude, longitude};
+    gpsAltitude = (typeof altitude === 'number' && isFinite(altitude)) ? Math.round(altitude) : null;
     setGpsStatus('live', 'app.gpsLive');
+    /* Hündürlük ayrıca gözlənilir: internet yoxdursa o, GPS-ə keçib
+       nəticə verməlidir. Hava və məkan adı isə yalnız onlaynda mümkündür,
+       uğursuzluqları hündürlüyü bloklamamalıdır. */
+    await fetchElevation(latitude, longitude);
     try{
       await Promise.all([
-        fetchElevation(latitude, longitude),
         fetchWeather(latitude, longitude),
         fetchLocationName(latitude, longitude),
       ]);
-    }catch(e){ toast(t('toast.fetchErr')); }
+    }catch(e){ if(!altIsApprox) toast(t('toast.fetchErr')); }
     finally{
       // Əsas dönüşüm: GPS işlədi, istifadəçi real hündürlüyünü gördü
       track('gps_located', { altitude: currentAlt });
@@ -495,10 +506,7 @@ function animateNumber(el, from, to, duration=1000){
   requestAnimationFrame(tick);
 }
 
-async function fetchElevation(lat, lon){
-  const res = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${lat}&longitude=${lon}`);
-  const data = await res.json();
-  const alt = Math.round(data.elevation?.[0] ?? 0);
+function applyElevation(alt){
   const prev = currentAlt;
   currentAlt = alt;
   animateNumber(document.getElementById('altValue'), prev, alt);
@@ -507,6 +515,43 @@ async function fetchElevation(lat, lon){
   checkSickness(alt);
   updateRecord(alt);
   drawCard();
+}
+
+/* Hündürlüyün iki mənbəyi var:
+   1) Open-Meteo relyef API-si — ±1-3 m, internet tələb edir
+   2) GPS peykinin öz hündürlüyü — ±10-30 m, internet tələb etmir
+   Onlayn olanda 1-ci, cığırda internet kəsiləndə 2-ci işləyir.
+   Zəif şəbəkədə fetch dayanıb qalmasın deyə 6 saniyəlik limit qoyulub. */
+async function fetchElevation(lat, lon){
+  altIsApprox = false;
+  try{
+    const ctrl = new AbortController();
+    const timer = setTimeout(()=>ctrl.abort(), 6000);
+    let data;
+    try{
+      const res = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${lat}&longitude=${lon}`, {signal: ctrl.signal});
+      if(!res.ok) throw new Error('elevation http '+res.status);
+      data = await res.json();
+    } finally { clearTimeout(timer); }
+    const alt = data.elevation?.[0];
+    if(typeof alt !== 'number') throw new Error('elevation missing');
+    applyElevation(Math.round(alt));
+    /* Şəbəkə qayıdandan sonra "Oflayn" yazısı ilişib qalmasın:
+       status burada açıq şəkildə bərpa olunur, çağırış sırasından asılı olmadan. */
+    setGpsStatus('live', 'app.gpsLive');
+  }catch(e){
+    if(gpsAltitude === null){
+      setGpsStatus('err', 'app.gpsOffline');
+      toast(t('toast.offlineNoAlt'));
+      track('elevation_offline_unavailable');
+      return;
+    }
+    altIsApprox = true;
+    applyElevation(gpsAltitude);
+    setGpsStatus('live', 'app.gpsOffline');
+    toast(t('toast.offlineAlt'));
+    track('elevation_from_gps', { altitude: gpsAltitude });
+  }
 }
 
 async function fetchWeather(lat, lon){
@@ -590,7 +635,8 @@ function initHundurluk(){
   document.getElementById('refreshBtn').addEventListener('click', ()=>{
     if(currentCoords){
       fetchElevation(currentCoords.latitude, currentCoords.longitude);
-      fetchWeather(currentCoords.latitude, currentCoords.longitude);
+      // Oflayn halda hava məlumatı gəlmir — bu, konsola xəta atmamalıdır
+      fetchWeather(currentCoords.latitude, currentCoords.longitude).catch(()=>{});
     } else locate();
   });
   renderElevProfile(0);
